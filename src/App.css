@@ -1,0 +1,353 @@
+/* src/App.css — semua styling app. Warna & font global di blok :root.
+   Kalau ganti warna utama, ubah di sini DAN di src/theme.js (dipakai
+   MapLibre paint properties, yang tidak bisa baca CSS var()). */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --color-bg: #0e1512;
+  --color-panel: #141d19;
+  --color-panel-alpha: rgba(20, 29, 25, 0.92);
+  --color-text: #f2f0e8;
+  --color-text-muted: #9fb0a8;
+  --color-accent: #d9a441;
+  --color-accent-soft: rgba(217, 164, 65, 0.2);
+  --color-danger: #c2503f;
+  --color-forest: #3f7a5c;
+  --color-border: #263129;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.65;
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Tab Switcher ---------- */
+.tab-switcher {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  gap: 2px;
+  background: var(--color-panel-alpha);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 4px;
+  backdrop-filter: blur(8px);
+}
+.tab-switcher button {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.tab-switcher button.is-active {
+  background: var(--color-accent);
+  color: #1a1408;
+}
+
+/* ---------- Story (tab Cerita) ---------- */
+.story {
+  position: relative;
+  height: 100vh;
+}
+.map-controller {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+.story__scroll-container {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: none;
+}
+
+.step {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 80px 6vw;
+}
+.step--left { justify-content: flex-start; }
+.step--right { justify-content: flex-end; }
+.step--full { justify-content: center; text-align: center; }
+
+.step__card {
+  max-width: 460px;
+  background: var(--color-panel-alpha);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  backdrop-filter: blur(6px);
+}
+.step--full .step__card { max-width: 640px; }
+
+.step__title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+.step--hero .step__title { font-size: 44px; }
+.step__text {
+  font-size: 16px;
+  color: var(--color-text);
+  margin: 0 0 12px;
+}
+.citation-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.step--hero .step__card,
+.step--hook .step__card {
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+}
+
+/* ---------- Stats ---------- */
+.stat-block {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.stat-block__value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+.stat-block__label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Media ---------- */
+.media-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+.media-gallery img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  aspect-ratio: 4/3;
+}
+
+/* ---------- Footnotes & downloads ---------- */
+.footnote-panel__item {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 4px 0;
+}
+.downloads-panel__item {
+  display: block;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.downloads-panel__title { font-weight: 600; }
+.downloads-panel__desc { font-size: 13px; color: var(--color-text-muted); }
+
+/* ---------- Step indicator ---------- */
+.step-indicator {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.step-indicator__group { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.step-indicator__label {
+  font-size: 9px;
+  writing-mode: vertical-rl;
+  color: var(--color-text-muted);
+  display: none; /* keep minimal; enable if desired */
+}
+.step-indicator__dots { display: flex; flex-direction: column; gap: 6px; }
+.step-indicator__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+.step-indicator__dot.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ---------- Scroll progress ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-border);
+  z-index: 60;
+}
+.scroll-progress__bar {
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* ---------- Dashboard ---------- */
+.dashboard-view {
+  height: 100vh;
+  overflow-y: auto;
+  padding-top: 72px;
+}
+.dashboard-map {
+  position: relative;
+  height: 60vh;
+  margin: 0 24px 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.dashboard-map__canvas { position: absolute; inset: 0; }
+.dashboard-map__layer-panel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+  background: var(--color-panel-alpha);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  font-size: 12px;
+  min-width: 200px;
+}
+.dashboard-map__category { margin-bottom: 8px; }
+.dashboard-map__category-label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.dashboard-map__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  cursor: pointer;
+}
+.dashboard-map__dummy-badge {
+  font-size: 9px;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.dashboard-view__panels {
+  padding: 0 24px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.dashboard-stats__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.dashboard-stats__card {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.dashboard-stats__value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+.dashboard-stats__label { font-size: 12px; color: var(--color-text-muted); }
+.dashboard-stats__charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin: 16px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+th { color: var(--color-text-muted); font-weight: 600; }
+.cases-table__hint { font-size: 12px; color: var(--color-text-muted); }
+
+/* ---------- Chart block (used in Story steps) ---------- */
+.chart-block { margin: 12px 0; }
+
+/* ---------- Accessibility: reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .story__scroll-container { scroll-behavior: auto; }
+}
+
+/* ---------- Tablet breakpoint fix (641-899px) ---------- */
+@media (min-width: 641px) and (max-width: 899px) {
+  .step__card { max-width: 55%; }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .step { padding: 24px; justify-content: center !important; }
+  .step__card { max-width: 100%; }
+  .step-indicator { display: none; }
+}
