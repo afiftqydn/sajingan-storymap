@@ -874,141 +874,215 @@ html, body, #root {
   margin-top: 6px;
 }
 
-/* ---------- Tab "Dashboard" (angka, chart, tabel, dokumen) ---------- */
+/* ---------- Tab "Dashboard" ─ layout baru ---------- */
 .dashboard-view {
   height: 100vh;
   overflow-y: auto;
-  padding-top: 88px;
+  padding-top: 80px;
 }
 .dashboard-view__panels {
-  padding: 0 24px 48px;
+  padding: 24px 32px 80px;
   max-width: 1100px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 0;
 }
-.dashboard-view__downloads h2 {
+
+/* Section blocks */
+.db { display: flex; flex-direction: column; gap: 0; }
+.db-section {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.db-section:last-child { border-bottom: none; }
+
+.db-section-title { margin-bottom: 20px; }
+.db-section-title__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+  margin-bottom: 6px;
+}
+.db-section-title__h {
   font-family: var(--font-display);
-  font-size: 20px;
-  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
 }
-.dashboard-stats__cards {
+
+/* Stat cards */
+.db-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
+  margin-bottom: 24px;
+}
+.db-cards--3 { grid-template-columns: repeat(3, 1fr); }
+.db-cards--4 { grid-template-columns: repeat(4, 1fr); }
+.db-card {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.db-card--accent {
+  border-color: var(--color-accent-text);
+  background: var(--color-accent-soft);
+}
+.db-card__value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.db-card--accent .db-card__value { color: var(--color-accent-text); }
+.db-card__label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* Callout boxes */
+.db-callout {
+  background: var(--color-panel);
+  border-left: 3px solid var(--color-border);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
   margin: 16px 0;
 }
-.dashboard-stats__card {
+.db-callout--warn {
+  border-left-color: var(--color-cta);
+  background: rgba(209, 85, 31, 0.06);
+  color: var(--color-text);
+}
+.db-callout--accent {
+  border-left-color: var(--color-accent-text);
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Infobox row */
+.db-infobox {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.db-infobox__item {
   background: var(--color-panel);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px 16px;
+  flex: 1;
+  min-width: 140px;
 }
-.dashboard-stats__value {
+.db-infobox__val {
+  display: block;
   font-family: var(--font-display);
-  font-size: 21px;
-  color: var(--color-accent-text);
+  font-size: 20px;
   font-weight: 700;
+  color: var(--color-accent-text);
+  margin-bottom: 4px;
 }
-.dashboard-stats__label { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); }
-.dashboard-stats__charts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin: 16px 0;
+.db-infobox__desc { font-size: 12px; color: var(--color-text-muted); }
+
+/* Charts */
+.db-chart-block { margin: 12px 0 20px; }
+.db-chart-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
 }
-table {
+
+/* Tables */
+.db-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  margin: 16px 0;
 }
-th, td {
+.db-table th {
   text-align: left;
-  padding: 8px 10px;
+  padding: 8px 12px;
+  background: var(--color-panel);
+  border-bottom: 2px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.db-table td {
+  padding: 9px 12px;
   border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  vertical-align: top;
 }
-th { color: var(--color-text-muted); font-weight: 600; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; }
-.cases-table__hint { font-size: 12px; color: var(--color-text-muted); }
+.db-table__row--warn td { background: rgba(224, 193, 77, 0.05); }
+.db-table__row--primary td { background: rgba(255, 90, 60, 0.05); }
+.db-table tbody tr:hover td { background: var(--color-accent-soft); }
 
-/* ---------- Chart block (dipakai hemat) ---------- */
-.chart-block { margin: 12px 0; }
-
-/* ---------- Accessibility: reduced motion ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .story__narrative-overlay { scroll-behavior: auto; }
+/* Badges */
+.db-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-text-muted);
 }
+.db-badge--ok { border-color: var(--color-accent-text); color: var(--color-accent-text); background: var(--color-accent-soft); }
+.db-badge--warn { border-color: var(--color-cta); color: var(--color-cta); background: rgba(209,85,31,0.08); }
+.db-badge--danger { border-color: var(--color-danger); color: var(--color-danger); background: rgba(138,47,34,0.08); }
 
-/* ---------- Responsif: popup narasi menyempit di layar sempit ----------
-   Struktur layout (rail + panggung + popup mengambang) SUDAH sama di
-   semua ukuran layar sejak awal — jadi di sini cuma perlu menyesuaikan
-   LEBAR popup dan padding, bukan flip struktur seperti sebelumnya. */
-@media (max-width: 1024px) {
-  .step { padding: 72px 5vw 40px; }
+/* Subtitles & desc */
+.db-subtitle {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 8px;
 }
-
-@media (min-width: 641px) and (max-width: 1024px) {
-  .step__card { max-width: 60vw; }
-}
-
-/* ---------- Mobile ---------- */
-@media (max-width: 640px) {
-  .app__topbar { max-width: calc(100vw - 24px); left: 12px; transform: none; overflow-x: auto; }
-  .theme-toggle { width: 28px; height: 28px; }
-  .story__nav { left: 8px; padding: 8px 4px; max-height: 60vh; }
-  .story__nav-item { font-size: 8px; padding: 8px 1px; }
-  .story__nav-icon svg { width: 16px; height: 16px; }
-  .step { padding: 20px; }
-  .step__card { max-width: 100%; }
-  .map-overlay-top { top: 60px; right: 10px; gap: 6px; }
-  .map-overlay-bottom { bottom: 10px; right: 10px; gap: 6px; }
-  .map-north-arrow { width: 32px; height: 32px; }
-  .map-north-arrow svg { width: 20px; height: 25px; }
-  .map-legend { min-width: 130px; padding: 8px 10px; }
-  .map-source-badge { font-size: 9px; max-width: 140px; }
-  .map-scale-bar { padding: 4px 8px; }
-  .dashboard-map__layer-panel {
-    display: none;
-    width: calc(100vw - 48px);
-    max-width: 280px;
-    font-size: 11px;
-    padding: 10px;
-  }
-  .dashboard-map__layer-panel.is-open-mobile { display: block; }
-  .inset-map { width: 96px; height: 72px; }
-  .dashboard-map__panel-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 5;
-    background: var(--color-panel-alpha-soft);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 7px 10px;
-    color: var(--color-text);
-    font-size: 11px;
-    font-family: var(--font-body);
-    cursor: pointer;
-  }
-  .dashboard-map__panel-close {
-    display: block;
-    background: none;
-    border: none;
-    color: var(--color-text);
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0 4px;
-    flex-shrink: 0;
-  }
-  .dashboard-map__category-label { padding: 7px 2px; } /* target tap sedikit lebih besar buat layar sentuh */
-  .dashboard-map__dropzone-hint { font-size: 12px; padding: 16px; }
-  .dashboard-map__upload-hint { font-size: 9px; }
+.db-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+  max-width: 720px;
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-view__panels { padding: 16px 16px 60px; }
+  .db-cards--3, .db-cards--4 { grid-template-columns: repeat(2, 1fr); }
+  .db-table { font-size: 11px; }
+  .db-table th, .db-table td { padding: 6px 8px; }
+  .db-section-title__h { font-size: 18px; }
+}
+@media (max-width: 480px) {
+  .db-cards--3, .db-cards--4 { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Error Boundary & fallback peta ---------- */
 /* ---------- Error Boundary & fallback peta ---------- */
 .error-boundary {
   height: 100vh;

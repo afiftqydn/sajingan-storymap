@@ -57,19 +57,11 @@ export const LAYER_CATALOG = [
     id: 'biodiversity', name: 'Sebaran Flora & Fauna', category: 'Informasi Tambahan',
     geometryType: 'point', color: '#4d8fe0', data: null,
   },
-  {
-    id: 'das', name: 'Daerah Aliran Sungai', category: 'Informasi Tambahan',
-    geometryType: 'line', color: '#4d8fe0', data: null,
-  },
 
   // ---- Status Legal (dummy — ganti kawasan_hutan_aoi.geojson) ----
   {
     id: 'kawasan-hutan', name: 'Kawasan Hutan (HL/HP/HPT)', category: 'Status Legal',
     geometryType: 'polygon', color: '#5c8a6f', data: null,
-  },
-  {
-    id: 'perhutanan-sosial', name: 'Perhutanan Sosial', category: 'Status Legal',
-    geometryType: 'polygon', color: '#8a5c6f', data: null,
   },
 
   // ---- Supply Chain — DATA ASLI dari Tabel 2 & 3 PDF ----

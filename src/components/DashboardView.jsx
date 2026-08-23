@@ -1,17 +1,19 @@
 import DashboardStats from './DashboardStats.jsx';
-import CasesTable from './CasesTable.jsx';
 import DownloadsPanel from './DownloadsPanel.jsx';
 
-// Tab "Dashboard" — angka, chart, dan tabel. Peta ada di tab terpisah
-// ("Peta Interaktif"), supaya tab ini murni fokus ke data.
+// Tab "Dashboard" — cerita lengkap lewat data & angka.
+// Cukup buka tab ini saja untuk memahami seluruh temuan investigasi
+// tanpa perlu baca narasi Storymap atau eksplorasi Peta Interaktif.
 export default function DashboardView() {
   return (
     <div className="dashboard-view">
       <div className="dashboard-view__panels">
         <DashboardStats />
-        <CasesTable />
-        <section className="dashboard-view__downloads">
-          <h2>Dokumen & Sumber Data</h2>
+        <section className="db-section">
+          <div className="db-section-title">
+            <span className="db-section-title__label">DOKUMEN</span>
+            <h2 className="db-section-title__h">Sumber Data & Unduhan</h2>
+          </div>
           <DownloadsPanel />
         </section>
       </div>

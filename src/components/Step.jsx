@@ -2,6 +2,7 @@ import StatBlock from './StatBlock.jsx';
 import FootnotePanel, { renderTextWithCitations } from './FootnotePanel.jsx';
 import MediaGallery from './MediaGallery.jsx';
 import DownloadsPanel from './DownloadsPanel.jsx';
+import ChartBlock from './ChartBlock.jsx';
 
 // Satu chapter di tab Storymap. `active` = true kalau chapter ini yang
 // sedang di tengah viewport (dipakai untuk trigger animasi stat count-up).
@@ -27,10 +28,12 @@ export default function Step({ chapter, active }) {
       <div className={cardClasses.join(' ')}>
         {eyebrow && <span className="step__eyebrow">{eyebrow}</span>}
         {title && <h2 className="step__title">{title}</h2>}
+        {/* Urutan: narasi → gambar → keyword (stats) */}
         {text && <p className="step__text">{renderTextWithCitations(text)}</p>}
-        <StatBlock stats={stats} active={active} />
         <MediaGallery images={images} />
+        {chapter?.chart && <ChartBlock chartId={chapter.chart} />}
         {type === 'downloads' && <DownloadsPanel />}
+        <StatBlock stats={stats} active={active} />
         <FootnotePanel footnotes={footnotes} />
       </div>
     </section>
