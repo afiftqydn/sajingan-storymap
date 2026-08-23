@@ -1,6 +1,6 @@
 // src/hooks/useStepObserver.js
 //
-// Deteksi chapter mana yang sedang aktif saat user scroll di tab Cerita.
+// Deteksi chapter mana yang sedang aktif saat user scroll di tab Storymap.
 // Pakai IntersectionObserver — tiap <Step> punya data-step-id, hook ini
 // mengembalikan id chapter yang sedang paling dominan di viewport.
 //

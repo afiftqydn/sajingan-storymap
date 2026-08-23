@@ -1,4 +1,11 @@
 # Alur Development — Storymap Sajingan Besar
+
+Dokumen ini untuk kamu yang baru pertama kali pegang project React ini.
+Urutannya sengaja dari paling dasar: siapkan tools → jalankan lokal →
+paham struktur → mulai edit → commit → deploy.
+
+---
+
 ## 0. Yang perlu di-install di komputer (sekali saja)
 
 | Tool | Cek versi | Kalau belum ada |
@@ -77,7 +84,7 @@ sajingan-storymap/
 │   ├── mapStyle.js            # basemap satelit, dipakai KEDUA tab
 │   ├── data/                  # ============ FILE YANG PALING SERING DIEDIT ============
 │   │   ├── polygons.js          # koordinat: batas kecamatan, 3 lokasi kasus
-│   │   ├── layers.js             # katalog 16 layer peta dashboard
+│   │   ├── layers.js             # katalog layer peta Peta Interaktif (5 kategori: AOI, Tutupan Lahan, Informasi Tambahan, Status Legal, Supply Chain)
 │   │   ├── chapters.js           # isi narasi tab Cerita (14 chapter)
 │   │   ├── reportData.js         # angka & tabel tab Peta & Data
 │   │   └── downloads.js          # daftar dokumen di chapter penutup
@@ -146,10 +153,55 @@ export langsung dari QGIS: EPSG:4326). Setelah nambah polygon baru,
 import di `chapters.js` (untuk tab Cerita) dan/atau `layers.js` (untuk
 tab Dashboard) sesuai kebutuhan.
 
-### Ubah/tambah layer peta dashboard
+### Ubah/tambah layer peta Peta Interaktif
 Edit `src/data/layers.js`, tambah satu objek di `LAYER_CATALOG`. Isi
-`geometryType` (`'polygon'` | `'point'` | `'line'`) yang benar — peta
-dashboard otomatis tahu cara render dan toggle-nya.
+`geometryType` (`'polygon'` | `'point'` | `'line'`) yang benar, dan
+`category` — HARUS salah satu dari 5 kategori yang sudah ada (`AOI`,
+`Tutupan Lahan`, `Informasi Tambahan`, `Status Legal`, `Supply Chain`),
+atau kategori baru kalau memang perlu. Urutan kategori di panel = urutan
+kemunculan pertama di array `LAYER_CATALOG`, bukan alfabetis.
+
+**Pengecualian:** "Prediksi Supply Chain" (layer animasi rute) BUKAN
+bagian `LAYER_CATALOG` — dia komponen terpisah (`RouteAnimationLayer.jsx`)
+karena mekanismenya beda (animasi, bukan GeoJSON statis). Toggle-nya
+ditulis manual di `DashboardMap.jsx`. Kalau mau ubah datanya, itu di
+`src/data/routes.js`, bukan `layers.js` — dan koordinat mill/PoD di
+`routes.js` diambil OTOMATIS dari `layers.js` (biar konsisten), jadi
+cukup ubah di satu tempat (`layers.js`).
+
+### Drag-and-drop GeoJSON/SHP
+Tarik file `.geojson`, `.json`, `.shp`, atau `.zip` (bundle shapefile
+lengkap: `.shp`+`.dbf`+`.prj`) langsung ke peta di tab Peta Interaktif —
+otomatis jadi layer baru di kategori **Informasi Tambahan**, lengkap
+toggle show/hide + tombol hapus (×). Logic-nya di
+`src/utils/parseGeoFile.js` (pakai library `shpjs`).
+
+Catatan: `.shp` sendirian (tanpa `.dbf`) cuma bawa geometri, atribut/
+nama kosong — kalau butuh nama ikut, drop versi `.zip` bundle lengkap.
+
+**Performa:** `shpjs` (~140KB) di-import DINAMIS (`await import('shpjs')`
+di dalam `parseGeoFile.js`), BUKAN di top-level file — jadi Vite pisahkan
+jadi chunk sendiri yang cuma di-download pas user benar-benar drop file
+`.shp`/`.zip`. Kalau nanti nambah dependency besar lain yang cuma
+dipakai fitur tertentu (bukan tiap kunjungan), pakai pola yang sama.
+
+### Peta sisipan (inset/locator map) — tab Storymap
+Peta kecil pojok kiri-bawah (`src/components/InsetMap.jsx`) — nunjukin
+konteks region lebih luas + kotak yang mewakili area yang lagi
+ditampilkan peta utama, update real-time ikut peta utama digeser.
+Ini peta MapLibre KEDUA yang sungguhan (non-interaktif), bukan gambar
+statis. Sengaja hilang di chapter cover/hero (sama seperti nav rail) —
+biar tidak mengganggu tampilan depan.
+
+Ubah area yang ditampilkan: edit `INSET_CENTER`/`INSET_ZOOM` di atas
+file `InsetMap.jsx`.
+
+### Icon SVG kustom (Mills/PoD)
+Titik Mills & PoD pakai icon SVG sendiri (bukan lingkaran polos) —
+didefinisikan di `src/utils/mapIcons.js`. Ganti bentuk/warna: edit
+string SVG di situ. Nambah jenis icon baru: tambah entri di object
+`ICONS` di file yang sama, lalu pakai `geometryType: 'icon-point'` +
+`icon: 'nama-key'` di layer terkait (`layers.js`).
 
 ### Ubah angka & tabel di tab Peta & Data
 Edit `src/data/reportData.js`. **Ingat:** kalau angka yang sama juga
@@ -159,11 +211,73 @@ satu sumber).
 ### Tambah/ubah dokumen unduhan
 Edit `src/data/downloads.js`.
 
+### Sumber citra & atribusi (JANGAN dihapus begitu saja)
+Badge "Citra satelit: ..." di pojok kanan-bawah peta **bukan cuma
+dekorasi** — baris kedua (`© Esri, Maxar, Earthstar Geographics`) itu
+syarat lisensi Esri World Imagery (gratis, tanpa API key, tapi wajib
+atribusi). Kalau mau ubah tampilannya, boleh — tapi teks provider-nya
+harus tetap ada di suatu tempat yang kelihatan. Isinya diatur di
+`src/mapStyle.js` (`imagerySource.provider`), dipakai oleh
+`MapOverlayStack.jsx`.
+
 ### Ubah warna & font
-- Warna umum UI + font: blok `:root` di `src/App.css`.
-- Warna yang dipakai peta (paint MapLibre): `src/theme.js`.
+- Warna umum UI + font: blok `:root` di `src/App.css` (dark, default) dan
+  blok `html[data-theme='light']` tepat di bawahnya (light mode).
+- Warna yang dipakai peta (paint MapLibre): `src/theme.js` — **tidak**
+  ikut berubah antar mode, karena backdrop-nya selalu citra satelit.
 - **Ubah keduanya bareng** kalau ganti warna utama — MapLibre tidak bisa
   baca CSS `var()`.
+- Ada dua token accent: `--color-accent` (buat background/border/fill —
+  boleh sama di kedua mode) dan `--color-accent-text` (buat WARNA TEKS —
+  harus beda per mode supaya kontras tetap aman: hijau terang di dark,
+  hijau lebih gelap di light). Kalau nambah elemen baru yang teksnya
+  pakai warna accent, pakai `--color-accent-text`, bukan `--color-accent`.
+
+### Toggle dark/light mode
+Sudah otomatis jalan — tombol bulat kanan-atas (`ThemeToggle.jsx`).
+State disimpan di `localStorage`, jadi pilihan user tidak reset tiap buka
+ulang. Kalau mau ubah warna light mode, edit blok
+`html[data-theme='light']` di `App.css` (lihat poin di atas).
+
+### Beri foto ruang lebih besar di satu chapter
+Tambahkan `mediaLayout: 'wide'` di objek chapter (`chapters.js`). Card
+jadi lebih lebar (560px, bukan 460px), dan kalau `images` isinya lebih
+dari satu, foto pertama otomatis jadi "hero" (lebih besar), sisanya jadi
+thumbnail di bawahnya. Dipakai di chapter lanskap dan 3 case study,
+karena chapter-chapter itu foto lapangan-nya jadi bukti visual utama,
+bukan cuma ilustrasi.
+
+**Popup TIDAK punya scrollbar internal** — sengaja, supaya tidak ada
+scroll bersarang (scroll di dalam scroll). Ini artinya kamu bebas
+tambah foto sebanyak yang perlu di array `images` — card akan tumbuh
+tinggi mengikuti jumlah foto, bukan dipotong. Konsekuensinya: chapter
+dengan banyak foto akan "memakan" tinggi layar lebih banyak saat
+di-scroll — itu trade-off yang memang diinginkan (dibanding scrollbar
+bersarang yang bikin pengalaman scroll jadi membingungkan).
+
+### Animasi rute rantai pasok (chapter "Potensial Mill/Dealer")
+Data titik & rute ada di `src/data/routes.js` — TERPISAH dari
+`chapters.js`, karena ini data spasial (koordinat), bukan narasi.
+
+- `routePoints` — semua titik: lokasi kasus (`type: 'case'`, merah,
+  dapat efek pulsing), mill (`type: 'mill'`, kuning), dealer/port
+  (`type: 'dealer'`, biru). Tambah titik baru = tambah satu objek di
+  array ini.
+- `routeChains` — satu chain = satu "perjalanan" (array id titik
+  berurutan, bisa multi-hop: kasus → mill → dealer). Tiap chain dapat
+  SATU titik animasi yang jalan sepanjang chain itu, loop terus.
+  Garis rute digambar OTOMATIS dari urutan titik di chain — tidak
+  perlu gambar polyline manual.
+
+**TODO paling penting:** koordinat mill/dealer di `routePoints` masih
+placeholder. Ganti dengan lokasi asli begitu sudah ada datanya. Kalau
+mau rute mengikuti jalan asli (bukan garis lurus), itu perlu source
+data terpisah (hasil routing engine kayak OSRM) — di luar scope
+template ini, kabari kalau butuh dibantu strukturnya.
+
+Animasi ini cuma nyala di chapter yang punya field `routes: true` di
+`chapters.js` (sekarang cuma `pre-harvest-alert`). Mau nyalakan di
+chapter lain, tambahkan field itu di situ.
 
 ### Tambah chart baru
 1. Buat file baru di `src/components/charts/`, contoh pola dari
@@ -254,9 +368,13 @@ output directory `dist`, auto-deploy tiap push.
 
 | Gejala | Kemungkinan penyebab |
 |---|---|
+| Layar HITAM TOTAL (bukan cuma peta — nav, teks, semuanya hilang) | Ada error JS yang crash seluruh React tree (sering: WebGL tidak didukung/diblokir di perangkat). Sudah ada `ErrorBoundary` yang harusnya menangkap ini dan tampilkan pesan error alih-alih blank — kalau MASIH blank total, buka DevTools (F12) → tab Console, dan baca pesan merahnya untuk diagnosis lebih lanjut |
+| Peta layar hitam gelap tiap reload (dev) | Sudah diperbaiki — dulu `React.StrictMode` di `main.jsx` konflik dengan WebGL context MapLibre. Kalau nanti nambahkan StrictMode lagi, jangan bungkus komponen yang render peta |
 | Peta blank/abu-abu | Cek domain di `mapStyle.js` — harus `server.arcgisonline.com`, BUKAN `server.arcgis.com` |
 | `npm install` error | Cek versi Node (`node -v`), harus ≥ 18 |
 | Chapter baru tidak muncul di navigasi | Cek `id` unik, dan `section`-nya ada di `SECTION_LABELS` (`chapters.js`) |
 | Chart tidak muncul, console warning "id chart tidak dikenal" | Id di field `chart` chapter tidak match dengan yang terdaftar di `ChartBlock.jsx` — cek ejaan |
 | Foto tidak muncul | Pastikan file ada di `public/images/`, path di `chapters.js` mulai dengan `/images/...` (bukan `./` atau `../`) |
 | Layer dashboard tidak render walau di-toggle | Layer masih dummy (`data: null` di `layers.js`) — isi dengan GeoJSON asli dulu |
+| Icon Mills/PoD tidak muncul (titik kosong) | Icon SVG gagal dimuat sebelum layer ditambahkan — cek Console (F12) untuk error dari `mapIcons.js` |
+| File drop GeoJSON/SHP gagal / muncul pesan error | Cek format file — cuma `.geojson`/`.json`/`.shp`/`.zip` yang didukung. `.shp` sendirian tanpa `.dbf` tetap bisa asal cuma butuh geometri |

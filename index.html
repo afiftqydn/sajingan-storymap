@@ -8,6 +8,19 @@
       name="description"
       content="Investigasi ekspansi kebun sawit di Kecamatan Sajingan Besar, Kabupaten Sambas."
     />
+    <script>
+      // Set atribut data-theme SEBELUM React mount, supaya tidak ada
+      // kedipan (flash) dari tema default ke tema tersimpan pengguna.
+      (function () {
+        try {
+          var saved = localStorage.getItem('sajingan-storymap-theme');
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

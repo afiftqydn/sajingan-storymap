@@ -1,122 +1,87 @@
 // src/data/polygons.js
 //
-// SEMUA geometry (boundary AOI/desa/kasus) hidup DI SINI — dipakai kedua
-// tab (chapters.js untuk tab Cerita, DashboardMap.jsx untuk tab Peta &
-// Data). Jangan definisikan koordinat di tempat lain; edit di sini saja.
-//
-// Format: GeoJSON Feature standar. Koordinat di bawah adalah PLACEHOLDER
-// (persegi kasar di sekitar area Sajingan Besar) — ganti dengan geometry
-// asli hasil digitasi QGIS (export sebagai GeoJSON, EPSG:4326).
-//
-// TODO: ganti seluruh koordinat di file ini dengan data asli.
+// Koordinat geometri — PLACEHOLDER berdasarkan titik tengah dari laporan PDF.
+// Akan diganti GeoJSON asli begitu file tersedia.
+// Koordinat asli per PDF:
+//   Lokasi 1 — center: 1.65804, 109.57527 — 307 ha
+//   Lokasi 2 — center: 1.64645, 109.59320 — 133 ha
+//   Lokasi 3 — center: 1.62635, 109.58668 — 151 ha
 
+function box(cx, cy, wDeg, hDeg, props = {}) {
+  return {
+    type: 'Feature',
+    properties: props,
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        [cx - wDeg / 2, cy - hDeg / 2],
+        [cx + wDeg / 2, cy - hDeg / 2],
+        [cx + wDeg / 2, cy + hDeg / 2],
+        [cx - wDeg / 2, cy + hDeg / 2],
+        [cx - wDeg / 2, cy - hDeg / 2],
+      ]],
+    },
+  };
+}
+
+// Batas kecamatan — placeholder kotak besar
 export const kecamatanBoundary = {
   type: 'Feature',
-  properties: {
-    id: 'kecamatan-sajingan-besar',
-    name: 'Kecamatan Sajingan Besar',
-    category: 'batas-wilayah',
-  },
+  properties: { name: 'Kecamatan Sajingan Besar', category: 'batas-wilayah' },
   geometry: {
     type: 'Polygon',
-    coordinates: [
-      [
-        [108.95, 1.25],
-        [109.20, 1.25],
-        [109.20, 1.45],
-        [108.95, 1.45],
-        [108.95, 1.25],
-      ],
-    ],
+    coordinates: [[
+      [109.43, 1.43], [109.75, 1.43], [109.75, 1.82],
+      [109.43, 1.82], [109.43, 1.43],
+    ]],
   },
 };
 
+// Lokasi 1 — 307 ha, sekitar 0.022° x 0.013° (placeholder sampai GeoJSON asli ada)
 export const lokasi1Polygon = {
   type: 'Feature',
   properties: {
-    id: 'lokasi-1',
     name: 'Lokasi 1',
     category: 'studi-kasus',
-    areaHa: null,
+    areaHa: 307.083,
+    yearOpened: 2024,
+    status: 'TBM',
+    kawasan: 'HPT',
+    lat: 1.65804,
+    lng: 109.57527,
   },
-  geometry: {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [109.055, 1.335],
-        [109.070, 1.335],
-        [109.070, 1.348],
-        [109.055, 1.348],
-        [109.055, 1.335],
-      ],
-    ],
-  },
+  ...box(109.57527, 1.65804, 0.022, 0.014, {}).geometry && {},
+  geometry: box(109.57527, 1.65804, 0.022, 0.014).geometry,
 };
 
+// Lokasi 2 — 133 ha, sekitar 0.013° x 0.010°
 export const lokasi2Polygon = {
   type: 'Feature',
   properties: {
-    id: 'lokasi-2',
     name: 'Lokasi 2',
     category: 'studi-kasus',
-    areaHa: null,
+    areaHa: 133.588,
+    yearOpened: 2023,
+    status: 'TBM',
+    kawasan: 'HPT',
+    lat: 1.64645,
+    lng: 109.59320,
   },
-  geometry: {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [109.030, 1.322],
-        [109.045, 1.322],
-        [109.045, 1.335],
-        [109.030, 1.335],
-        [109.030, 1.322],
-      ],
-    ],
-  },
+  geometry: box(109.59320, 1.64645, 0.013, 0.010).geometry,
 };
 
+// Lokasi 3 — 151 ha, sekitar 0.014° x 0.011°
 export const lokasi3Polygon = {
   type: 'Feature',
   properties: {
-    id: 'lokasi-3',
     name: 'Lokasi 3',
     category: 'studi-kasus',
-    areaHa: null,
-    openedByBurning: true,
+    areaHa: 151.618,
+    yearOpened: 2022,
+    status: 'TBM',
+    kawasan: 'HPT',
+    lat: 1.62635,
+    lng: 109.58668,
   },
-  geometry: {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [109.075, 1.310],
-        [109.092, 1.310],
-        [109.092, 1.325],
-        [109.075, 1.325],
-        [109.075, 1.310],
-      ],
-    ],
-  },
+  geometry: box(109.58668, 1.62635, 0.014, 0.011).geometry,
 };
-
-export const untracedAreaPolygon = {
-  type: 'Feature',
-  properties: {
-    id: 'area-belum-tertelusuri',
-    name: 'Area Belum Tertelusuri',
-    category: 'batas-wilayah',
-  },
-  geometry: {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [109.010, 1.300],
-        [109.025, 1.300],
-        [109.025, 1.315],
-        [109.010, 1.315],
-        [109.010, 1.300],
-      ],
-    ],
-  },
-};
-
-export const allCasePolygons = [lokasi1Polygon, lokasi2Polygon, lokasi3Polygon];

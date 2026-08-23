@@ -1,168 +1,114 @@
-// src/data/layers.js
-//
-// Katalog SEMUA layer yang bisa ditoggle di tab "Peta & Data".
-// DashboardMap.jsx generic — render apa pun yang ada di LAYER_CATALOG,
-// tidak hardcode kategori. Nambah layer baru = nambah satu objek di sini,
-// isi `geometryType` yang benar ('polygon' | 'point' | 'line').
-//
-// TODO: ganti `data: null` dengan GeoJSON asli (FeatureCollection) begitu
-// tersedia. Sebelum diisi, layer tetap muncul di UI (checkbox) tapi tidak
-// render apa-apa di peta — itu behavior yang diharapkan untuk data dummy.
+// src/data/layers.js — Katalog layer tab Peta Interaktif
+// Data asli: mill & PoD dari Tabel 2 & 3 laporan PDF
+// Data lain masih dummy sampai GeoJSON asli tersedia
 
 import {
   kecamatanBoundary,
   lokasi1Polygon,
   lokasi2Polygon,
   lokasi3Polygon,
-  untracedAreaPolygon,
 } from './polygons.js';
 
+const fc = (features) => ({ type: 'FeatureCollection', features });
+
 export const LAYER_CATALOG = [
-  // ---- Batas Wilayah (asli, dari polygons.js) ----
+  // ---- AOI ----
   {
-    id: 'kecamatan',
-    name: 'Kecamatan',
-    category: 'Batas Wilayah',
-    geometryType: 'polygon',
-    color: '#f2f0e8',
-    data: {
-      type: 'FeatureCollection',
-      features: [kecamatanBoundary],
-    },
+    id: 'kecamatan', name: 'Kec. Sajingan Besar', category: 'AOI',
+    geometryType: 'polygon', color: '#f2f0e8',
+    data: fc([kecamatanBoundary]),
   },
   {
-    id: 'kasus',
-    name: 'Kasus (3 Lokasi)',
-    category: 'Batas Wilayah',
-    geometryType: 'polygon',
-    color: '#d9a441',
-    data: {
-      type: 'FeatureCollection',
-      features: [lokasi1Polygon, lokasi2Polygon, lokasi3Polygon],
-    },
+    id: 'lokasi-1', name: 'Lokasi 1 (307 ha)', category: 'AOI',
+    geometryType: 'polygon', color: '#ff5a3c',
+    data: fc([lokasi1Polygon]),
   },
   {
-    id: 'area-belum-tertelusuri',
-    name: 'Area Belum Tertelusuri',
-    category: 'Batas Wilayah',
-    geometryType: 'polygon',
-    color: '#9fb0a8',
-    data: {
-      type: 'FeatureCollection',
-      features: [untracedAreaPolygon],
-    },
+    id: 'lokasi-2', name: 'Lokasi 2 (133 ha)', category: 'AOI',
+    geometryType: 'polygon', color: '#ff5a3c',
+    data: fc([lokasi2Polygon]),
+  },
+  {
+    id: 'lokasi-3', name: 'Lokasi 3 (151 ha)', category: 'AOI',
+    geometryType: 'polygon', color: '#ff5a3c',
+    data: fc([lokasi3Polygon]),
   },
 
-  // ---- Tutupan Lahan (dummy) ----
+  // ---- Tutupan Lahan (dummy — ganti dengan GeoJSON asli) ----
   {
-    id: 'forest-cover-2015',
-    name: 'Tutupan Hutan 2015',
-    category: 'Tutupan Lahan',
-    geometryType: 'polygon',
-    color: '#3f7a5c',
-    data: null, // TODO: GeoJSON tutupan hutan 2015
+    id: 'forest-cover', name: 'Forest Cover', category: 'Tutupan Lahan',
+    geometryType: 'polygon', color: '#3f7a5c', data: null,
   },
   {
-    id: 'forest-cover-2026',
-    name: 'Tutupan Hutan 2026',
-    category: 'Tutupan Lahan',
-    geometryType: 'polygon',
-    color: '#2c5943',
-    data: null, // TODO: GeoJSON tutupan hutan 2026
+    id: 'planted-palm-oil', name: 'Planted Palm Oil', category: 'Tutupan Lahan',
+    geometryType: 'polygon', color: '#e0c14d', data: null,
   },
   {
-    id: 'planted-palm',
-    name: 'Kebun Sawit Tertanam',
-    category: 'Tutupan Lahan',
-    geometryType: 'polygon',
-    color: '#e0c14d',
-    data: null, // TODO
-  },
-  {
-    id: 'deforestation-to-palm',
-    name: 'Deforestasi → Sawit',
-    category: 'Tutupan Lahan',
-    geometryType: 'polygon',
-    color: '#c2503f',
-    // Catatan: layer ini SENGAJA reuse polygon Kasus 1/2/3 kalau memang
-    // lokasi yang sama (bukaan hutan yang terkonfirmasi jadi sawit) —
-    // bukan data terpisah. Lihat catatan di README lama.
-    data: {
-      type: 'FeatureCollection',
-      features: [lokasi1Polygon, lokasi2Polygon, lokasi3Polygon],
-    },
+    id: 'deforestasi', name: 'Deforestasi', category: 'Tutupan Lahan',
+    geometryType: 'polygon', color: '#c2503f', data: null,
   },
 
-  // ---- Status Legal (dummy) ----
+  // ---- Informasi Tambahan (dummy) ----
   {
-    id: 'kawasan-hutan-legal',
-    name: 'Kawasan Hutan (Legal)',
-    category: 'Status Legal',
-    geometryType: 'polygon',
-    color: '#5c8a6f',
-    data: null, // TODO
+    id: 'feg', name: 'Fungsi Ekosistem Gambut (FEG)', category: 'Informasi Tambahan',
+    geometryType: 'polygon', color: '#8a5cc4', data: null,
   },
   {
-    id: 'perhutanan-sosial',
-    name: 'Perhutanan Sosial',
-    category: 'Status Legal',
-    geometryType: 'polygon',
-    color: '#8a5c6f',
-    data: null, // TODO
+    id: 'biodiversity', name: 'Sebaran Flora & Fauna', category: 'Informasi Tambahan',
+    geometryType: 'point', color: '#4d8fe0', data: null,
+  },
+  {
+    id: 'das', name: 'Daerah Aliran Sungai', category: 'Informasi Tambahan',
+    geometryType: 'line', color: '#4d8fe0', data: null,
   },
 
-  // ---- Rantai Pasok (dummy) ----
+  // ---- Status Legal (dummy — ganti kawasan_hutan_aoi.geojson) ----
   {
-    id: 'palm-oil-dealer',
-    name: 'Palm Oil Dealer',
-    category: 'Rantai Pasok',
-    geometryType: 'point',
-    color: '#d9a441',
-    data: null, // TODO: titik lokasi dealer
+    id: 'kawasan-hutan', name: 'Kawasan Hutan (HL/HP/HPT)', category: 'Status Legal',
+    geometryType: 'polygon', color: '#5c8a6f', data: null,
   },
   {
-    id: 'route-to-pod',
-    name: 'Rute ke POD',
-    category: 'Rantai Pasok',
-    geometryType: 'line',
-    color: '#d9a44199',
-    data: null, // TODO
-  },
-  {
-    id: 'mills',
-    name: 'Mills',
-    category: 'Rantai Pasok',
-    geometryType: 'point',
-    color: '#c2503f',
-    data: null, // TODO: titik lokasi mill/PKS
-  },
-  {
-    id: 'route-to-mills',
-    name: 'Rute ke PKS',
-    category: 'Rantai Pasok',
-    geometryType: 'line',
-    color: '#c2503f99',
-    data: null, // TODO
+    id: 'perhutanan-sosial', name: 'Perhutanan Sosial', category: 'Status Legal',
+    geometryType: 'polygon', color: '#8a5c6f', data: null,
   },
 
-  // ---- Biodiversitas (dummy) ----
+  // ---- Supply Chain — DATA ASLI dari Tabel 2 & 3 PDF ----
+  // `hiddenFromPanel: true` — dikendalikan lewat toggle "Prediksi Supply Chain"
   {
-    id: 'biodiversity',
-    name: 'Sebaran Flora & Fauna',
-    category: 'Biodiversitas',
-    geometryType: 'point',
+    id: 'mills-terdekat',
+    name: 'Mills Terdekat',
+    category: 'Supply Chain',
+    geometryType: 'icon-point',
+    icon: 'mill',
     color: '#4d8fe0',
-    data: null, // TODO: dari IUCN RedList / iNaturalist / GBIF
+    hiddenFromPanel: true,
+    data: fc([
+      { type: 'Feature', properties: { name: 'Wana Hijau Semesta', group: 'DARMEX AGRO', ndpe: 'Non-NDPE', distanceKm: 25.67 }, geometry: { type: 'Point', coordinates: [109.597999, 1.515000] } },
+      { type: 'Feature', properties: { name: 'Ledo Lestari', group: 'DARMEX AGRO', ndpe: 'Non-NDPE', distanceKm: 31.26 }, geometry: { type: 'Point', coordinates: [109.716423, 1.464745] } },
+      { type: 'Feature', properties: { name: 'Wirata Daya Bangun Persada', group: 'DARMEX AGRO', ndpe: 'Non-NDPE', distanceKm: 35.36 }, geometry: { type: 'Point', coordinates: [109.602999, 1.429400] } },
+      { type: 'Feature', properties: { name: 'Agronusa Investama 3 – Sambas', group: 'WILMAR GROUP', ndpe: 'NDPE', certification: 'RSPO, ISPO', distanceKm: 43.88 }, geometry: { type: 'Point', coordinates: [109.537148, 1.421490] } },
+      { type: 'Feature', properties: { name: 'Ceria Prima 1', group: 'DARMEX AGRO', ndpe: 'Non-NDPE', distanceKm: 44.51 }, geometry: { type: 'Point', coordinates: [109.684100, 1.368900] } },
+      { type: 'Feature', properties: { name: 'Ceria Prima 2', group: 'DARMEX AGRO', ndpe: 'Non-NDPE', distanceKm: 53.87 }, geometry: { type: 'Point', coordinates: [109.666917, 1.300768] } },
+      { type: 'Feature', properties: { name: 'PT Kalimantan Subur Sawit (KSS) ⚠', group: 'UNKNOWN', ndpe: 'Non-NDPE', distanceKm: 61.07, primaryRisk: true }, geometry: { type: 'Point', coordinates: [109.877572, 1.333598] } },
+      { type: 'Feature', properties: { name: 'PT Wawasan Kebun Nusantara (WKN) ⚠', group: 'KPN Plantation', ndpe: 'NDPE', certification: 'ISPO', distanceKm: 72.02, primaryRisk: true, potentialBuyers: 'P&G, Colgate-Palmolive' }, geometry: { type: 'Point', coordinates: [109.817139, 1.266890] } },
+      { type: 'Feature', properties: { name: 'Musim Mas', group: 'MUSIM MAS', ndpe: 'NDPE', certification: 'RSPO, ISPO', distanceKm: 80.86 }, geometry: { type: 'Point', coordinates: [109.383631, 1.358028] } },
+    ]),
   },
-
-  // ---- Hidrologi (dummy) ----
   {
-    id: 'das',
-    name: 'Daerah Aliran Sungai',
-    category: 'Hidrologi',
-    geometryType: 'line',
-    color: '#4d8fe0',
-    data: null, // TODO: 4 sungai
+    id: 'pod-terdekat',
+    name: 'PoD Terdekat',
+    category: 'Supply Chain',
+    geometryType: 'icon-point',
+    icon: 'pod',
+    color: '#f2c94c',
+    hiddenFromPanel: true,
+    data: fc([
+      { type: 'Feature', properties: { name: 'PoD Pais', fruitSource: "Sanatab & Kaliau'", distanceKm: 3.10, photo: '/images/pod-pais.jpg' }, geometry: { type: 'Point', coordinates: [109.601757, 1.657105] } },
+      { type: 'Feature', properties: { name: 'PoD Baida', fruitSource: "Sanatab & Kaliau'", distanceKm: 3.57, photo: '/images/pod-baida.jpg' }, geometry: { type: 'Point', coordinates: [109.604266, 1.653802] } },
+      { type: 'Feature', properties: { name: 'PoD Arpi', fruitSource: "Sanatab & Kaliau'", distanceKm: 4.95, photo: '/images/pod-arpi.jpg' }, geometry: { type: 'Point', coordinates: [109.590249, 1.671903] } },
+      { type: 'Feature', properties: { name: 'PoD Pak Thomas', fruitSource: 'Sungai Bening, Santaban, Sanatab, Batang Air', distanceKm: 6.44 }, geometry: { type: 'Point', coordinates: [109.641092, 1.622351] } },
+      { type: 'Feature', properties: { name: 'PoD Ika', fruitSource: 'Desa Santaban', distanceKm: 7.54 }, geometry: { type: 'Point', coordinates: [109.596890, 1.687970] } },
+    ]),
   },
 ];
 
