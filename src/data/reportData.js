@@ -115,3 +115,28 @@ export const forestTrend = [
   { year: 2015, forestHa: 37691.62 },
   { year: 2025, forestHa: 33969.81 },
 ];
+
+// Timeline investigasi — ditampilkan di Dashboard sebagai activity log
+export const investigationTimeline = [
+  { date: '2022', label: 'Lokasi 3 teridentifikasi via analisis citra satelit', type: 'satellite', analyst: 'Desktop Analysis' },
+  { date: '2023', label: 'Lokasi 1 & 2 teridentifikasi', type: 'satellite', analyst: 'Desktop Analysis' },
+  { date: 'Aug 2025', label: 'Citra Google Earth konfirmasi pembakaran aktif Lokasi 1', type: 'satellite', analyst: 'Citra Analysis' },
+  { date: 'Nov 2025', label: 'Pembukaan lahan masih aktif teridentifikasi', type: 'satellite', analyst: 'Monitoring' },
+  { date: '2026', label: 'Verifikasi lapangan dilakukan Tim Sajingan Besar', type: 'field', analyst: 'Tim 0°Latitude' },
+  { date: '2026', label: 'Wawancara pemilik PoD — 6 PoD disurvei', type: 'field', analyst: 'Tim 0°Latitude' },
+  { date: '2026', label: 'Cross-check data ATR/BPN (Bhumi) — 0 HGU ditemukan', type: 'verification', analyst: 'Verified' },
+  { date: '2026', label: 'Laporan final disusun dan dipublikasikan', type: 'report', analyst: '0°Latitude Academy' },
+];
+
+// Bukti foto lapangan per lokasi — dipakai di photo grid dashboard
+export const fieldEvidence = [
+  { src: '/images/case-overview-1.jpg', type: 'DRONE', caption: 'Lokasi 1 — aerial view', location: 'Lokasi 1' },
+  { src: '/images/case1-burned.jpg', type: 'DRONE', caption: 'Bekas pembakaran ditanami sawit', location: 'Lokasi 1' },
+  { src: '/images/case1-tbm.jpg', type: 'GROUND', caption: 'Tanaman Belum Menghasilkan (TBM)', location: 'Lokasi 1' },
+  { src: '/images/case-overview-2.jpg', type: 'DRONE', caption: 'Lokasi 2 — aerial view', location: 'Lokasi 2' },
+  { src: '/images/case2-tbm.jpg', type: 'GROUND', caption: 'TBM Lokasi 2 — penanaman 2023', location: 'Lokasi 2' },
+  { src: '/images/case-overview-3.jpg', type: 'DRONE', caption: 'Lokasi 3 — aerial view', location: 'Lokasi 3' },
+  { src: '/images/case3-field.jpg', type: 'GROUND', caption: 'Akses jalan sudah bisa dilalui mobil', location: 'Lokasi 3' },
+  { src: '/images/pod-pais.jpg', type: 'GROUND', caption: 'PoD Pais — 3,1 km dari pusat lokasi', location: 'PoD' },
+  { src: '/images/pod-baida.jpg', type: 'GROUND', caption: 'PoD Baida — 3,57 km', location: 'PoD' },
+];
