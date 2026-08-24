@@ -222,12 +222,20 @@ export default function DashboardMap() {
         console.error('Gagal load icon peta:', err);
         failedIconsRef.current = new Set(['mill', 'pod']);
       }
+      // Fetch kecamatan GeoJSON asli (replace placeholder kotak)
+      const kecLayer = LAYER_CATALOG.find((l) => l.id === 'kecamatan');
+      if (kecLayer?.url) {
+        fetchLayerData(kecLayer).then(() => {
+          if (map.getSource('kecamatan')) {
+            map.getSource('kecamatan').setData(kecLayer.data);
+          }
+        });
+      }
+
       LAYER_CATALOG.forEach((layer) => {
         if (!layer.data) return;
         addMapLayer(map, layer, !!activeLayers[layer.id], popupRef, clickHandlersRef.current, failedIconsRef.current);
       });
-      // Kalau ada layer upload yang masuk SEBELUM peta selesai load
-      // (jarang, tapi jaga-jaga), tambahkan juga di sini.
       uploadedLayersRef.current.forEach((layer) => addMapLayer(map, layer, true, popupRef, clickHandlersRef.current, failedIconsRef.current));
     });
 
@@ -305,13 +313,47 @@ export default function DashboardMap() {
   // dua-duanya: layer yang sudah dalam pandangan (AOI) tidak bikin
   // kamera lompat, layer yang di luar pandangan (Mills/PoD tertentu)
   // tetap otomatis digeser supaya kelihatan.
-  const toggleLayer = (id) => {
+  // Fetch GeoJSON lazy — hanya di-download pertama kali layer dinyalakan.
+  // File besar (Forest 321KB, Planted 471KB) tidak dimuat saat halaman
+  // pertama dibuka, cuma waktu user benar-benar centang layer itu.
+  const fetchLayerData = async (layer) => {
+    if (layer.data || !layer.url) return layer.data;
+    try {
+      const res = await fetch(layer.url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const geojson = await res.json();
+      layer.data = geojson; // cache di objek layer — tidak perlu fetch ulang
+      return geojson;
+    } catch (err) {
+      console.error(`Gagal fetch ${layer.url}:`, err);
+      return null;
+    }
+  };
+
+  const toggleLayer = async (id) => {
     const nextValue = !activeLayers[id];
     setActiveLayers((prev) => ({ ...prev, [id]: nextValue }));
 
     if (nextValue && mapRef.current) {
       const layer = LAYER_CATALOG.find((l) => l.id === id) ?? uploadedLayersRef.current.find((l) => l.id === id);
-      if (layer?.data) {
+      if (!layer) return;
+
+      // Kalau layer belum punya data tapi ada geojsonPath — fetch sekarang
+      if (!layer.data && layer.geojsonPath) {
+        try {
+          const resp = await fetch(layer.geojsonPath);
+          if (resp.ok) {
+            layer.data = await resp.json();
+            if (mapRef.current) {
+              addMapLayer(mapRef.current, layer, true, popupRef, clickHandlersRef.current, failedIconsRef.current);
+            }
+          }
+        } catch (err) {
+          console.error(`Gagal fetch ${layer.geojsonPath}:`, err);
+        }
+      }
+
+      if (layer.data) {
         const bounds = getGeoJSONBounds(layer.data);
         if (bounds && !isBoundsVisible(mapRef.current, bounds)) {
           zoomToBounds(bounds);

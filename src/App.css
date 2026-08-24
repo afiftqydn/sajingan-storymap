@@ -81,6 +81,20 @@ html, body, #root {
   font-family: var(--font-body);
   line-height: 1.65;
   transition: background-color 0.25s ease, color 0.25s ease;
+  /* Momentum scroll + safe area untuk notch/gesture bar HP */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Prevent accidental pull-to-refresh dan horizontal scroll di HP */
+body { overscroll-behavior: none; }
+
+/* Elemen scroll internal pakai momentum */
+.story__narrative-overlay,
+.dashboard-view,
+.dashboard-map__layer-panel {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .app {
@@ -1139,17 +1153,217 @@ html, body, #root {
 }
 
 /* ── Responsive ── */
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIF — Strategi layout per breakpoint
+   
+   Breakpoints:
+   ≤1100px  Tablet landscape / iPad Pro
+   ≤900px   Tablet portrait (iPad)
+   ≤640px   HP besar (iPhone 14 / Android flagship)
+   ≤480px   HP kecil (iPhone SE, Android entry)
+   ══════════════════════════════════════════════════════ */
+
+/* ── Topbar (tab switcher + theme toggle) ── */
 @media (max-width: 900px) {
+  .app__topbar {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+  }
+}
+@media (max-width: 640px) {
+  .app__topbar { top: 10px; }
+  .tab-switcher button {
+    font-size: 11px;
+    padding: 7px 11px;
+  }
+  .theme-toggle { width: 26px; height: 26px; }
+}
+@media (max-width: 480px) {
+  .tab-switcher button { font-size: 10px; padding: 6px 9px; }
+}
+
+/* ══ TAB STORYMAP ══════════════════════════════════════ */
+
+/* Tablet: popup card lebih lebar (ada lebih banyak ruang) */
+@media (max-width: 1100px) {
+  .step__card { max-width: 52vw; }
+}
+
+/* Tablet portrait: popup agak lebar + padding lebih kecil */
+@media (max-width: 900px) {
+  .step {
+    padding: 80px 5vw 40px;
+    padding-left: max(5vw, 90px); /* clearance popup nav */
+  }
+  .step__card { max-width: 58vw; }
+  .step__title { font-size: 22px; }
+}
+
+/*
+  HP — strategi utama:
+  Popup "naik" ke bawah sebagai drawer, bukan floating kiri.
+  Peta tetap full-bleed di baliknya (tetap bisa kelihatan sebagian).
+  Card max-width 100%, tapi hanya mengisi ~65% tinggi layar dari bawah
+  lewat padding-top besar — user masih bisa "melihat" peta di bagian atas.
+*/
+@media (max-width: 640px) {
+  /* Semua step: card drawer dari bawah, peta tetap terlihat di atas */
+  .step {
+    padding: 0;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .step__card {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 20px 28px;
+    backdrop-filter: blur(14px);
+    max-height: 62vh;
+    overflow-y: auto;
+  }
+  /* Hero & hook: full screen, kamera di balik masih kelihatan */
+  .step--hero .step__card,
+  .step--hook .step__card {
+    max-height: 55vh;
+    border-radius: 16px 16px 0 0;
+    padding: 24px 20px 28px;
+  }
+  .step__title { font-size: 20px; }
+  .step__text { font-size: 14px; }
+
+  /* Nav sidebar: lebih kecil, jangan ganggu popup */
+  .story__nav {
+    left: 8px;
+    top: auto;
+    bottom: auto;
+    transform: none;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    padding: 8px 3px;
+  }
+  .story__nav-icon svg { width: 15px; height: 15px; }
+  .story__nav-text { font-size: 7px; }
+
+  /* Scroll progress bar */
+  .scroll-progress { height: 2px; }
+}
+
+@media (max-width: 480px) {
+  .step__card { padding: 16px 16px 24px; }
+  .step__title { font-size: 18px; }
+}
+
+/* ══ TAB PETA INTERAKTIF ══════════════════════════════ */
+
+/* Tablet: panel legend lebih sempit */
+@media (max-width: 1100px) {
+  .dashboard-map__layer-panel {
+    width: clamp(200px, 22vw, 280px);
+  }
+}
+@media (max-width: 900px) {
+  .dashboard-map__layer-panel {
+    width: clamp(190px, 28vw, 260px);
+    font-size: 12px;
+  }
+  .dashboard-map__category-label { font-size: 10px; }
+  .dashboard-map__checkbox { font-size: 11px; }
+}
+
+/* HP: panel collapse ke tombol (sudah ada), tinggal sesuaikan ukuran */
+@media (max-width: 640px) {
+  .dashboard-map__layer-panel {
+    display: none;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    z-index: 50;
+  }
+  .dashboard-map__layer-panel.is-open-mobile {
+    display: block;
+  }
+  .dashboard-map__panel-toggle {
+    display: flex;
+    bottom: 16px;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 20px;
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+  /* Inset map lebih kecil di HP */
+  .inset-map { width: 90px; height: 68px; }
+  /* Overlay peta naik sedikit */
+  .map-overlay-top { top: 56px; right: 10px; gap: 5px; }
+  .map-overlay-bottom { bottom: 64px; right: 10px; } /* clearance di atas tombol panel */
+}
+
+/* ══ TAB DASHBOARD ════════════════════════════════════ */
+
+/* Tablet landscape (≤1100px): tidak banyak berubah */
+@media (max-width: 1100px) {
+  .dashboard-view__panels { padding: 20px 20px 60px; }
+  .kpi__value { font-size: 22px; }
+}
+
+/* Tablet portrait (≤900px) */
+@media (max-width: 900px) {
+  .dashboard-view__panels { padding: 16px 16px 60px; }
   .kpi-strip { grid-template-columns: repeat(3, 1fr); }
-  .dash-grid--2 { grid-template-columns: 1fr; }
+  .dash-grid--2, .dash-grid--3 { grid-template-columns: 1fr; }
   .photo-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi__value { font-size: 20px; }
+  .case-card__area { font-size: 24px; }
 }
-@media (max-width: 600px) {
+
+/* HP besar (≤640px) */
+@media (max-width: 640px) {
+  .dashboard-view { padding-top: 64px; }
+  .dashboard-view__panels { padding: 14px 14px 56px; }
   .kpi-strip { grid-template-columns: repeat(2, 1fr); }
-  .dash-grid--3 { grid-template-columns: 1fr 1fr; }
-  .photo-grid { grid-template-columns: 1fr 1fr; }
-  .dashboard-view__panels { padding: 16px 14px 60px; }
+  .kpi { padding: 14px 12px; }
+  .kpi__value { font-size: 20px; }
+  .kpi__label { font-size: 11px; }
+  .photo-grid { grid-template-columns: repeat(2, 1fr); }
+  .photo-grid__item { aspect-ratio: 3/2; }
+  .dash-card { padding: 14px 14px; }
+  .dash-card__title { font-size: 14px; margin-bottom: 10px; }
+  .pod-chips { gap: 6px; }
+  .pod-chip { padding: 3px 10px; font-size: 11px; }
 }
+
+/* HP kecil (≤480px) */
+@media (max-width: 480px) {
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .kpi { padding: 12px 10px; }
+  .kpi__value { font-size: 18px; }
+  .photo-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
+  .tl__label { font-size: 12px; }
+  .case-card__area { font-size: 22px; }
+  .dash-section-label { font-size: 9px; }
+}
+
+/* Overlay kartografi — ukuran di HP */
+@media (max-width: 640px) {
+  .map-north-arrow { width: 32px; height: 32px; }
+  .map-north-arrow svg { width: 18px; height: 22px; }
+  .map-scale-bar { padding: 4px 8px; font-size: 10px; }
+  .map-source-badge { font-size: 9px; max-width: 130px; }
+  .map-legend { min-width: 120px; padding: 7px 9px; font-size: 11px; }
+  .inset-map { width: 88px; height: 65px; }
+}
+
+
 
 /* ── Legacy classes (tetap ada supaya tidak error) ── */
 .db, .db-section, .db-section-title, .db-cards, .db-card,
