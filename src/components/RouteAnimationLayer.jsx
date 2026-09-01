@@ -39,8 +39,27 @@ function pointById(id) {
 }
 
 // Gabungkan koordinat semua titik dalam satu chain jadi satu polyline.
+// Kalau segmen tertentu punya `pathCoords` (rute jalan asli, lihat
+// routes.js), dipakai utuh menggantikan lompatan garis lurus dari titik
+// sebelumnya ke titik ini — jadi traveler (titik berjalan) benar-benar
+// mengikuti kontur jalan, bukan potong lurus lewat hutan/sungai.
 function chainCoordinates(chain) {
-  return chain.pointIds.map((id) => pointById(id)?.coords).filter(Boolean);
+  const coords = [];
+  chain.pointIds.forEach((id, i) => {
+    const point = pointById(id);
+    if (!point) return;
+    if (i === 0) {
+      coords.push(point.coords);
+      return;
+    }
+    const seg = chain.segments?.[i - 1];
+    if (seg?.pathCoords?.length) {
+      coords.push(...seg.pathCoords);
+    } else {
+      coords.push(point.coords);
+    }
+  });
+  return coords;
 }
 
 function buildCaseAlertGeoJSON() {
@@ -59,8 +78,11 @@ function buildCaseAlertGeoJSON() {
 function buildLinesGeoJSON() {
   // SATU FITUR PER SEGMEN (bukan satu polyline per chain) — supaya
   // tiap segmen (kasus→mill, mill→PoD) bisa punya label jarak sendiri-
-  // sendiri. Visualnya tetap sama (segmen-segmen yang bersambung
-  // kelihatan seperti satu garis utuh), cuma datanya lebih granular.
+  // sendiri. Kalau segmen punya `pathCoords` (rute jalan asli dari
+  // routing engine, lihat routes.js), garisnya mengikuti jalan
+  // sungguhan — bukan garis lurus tembus hutan/sungai seperti
+  // sebelumnya. Segmen tanpa pathCoords (Lokasi->PoD, 3-7 km) tetap
+  // garis lurus karena tidak ada data rute jalan sepresisi itu.
   return {
     type: 'FeatureCollection',
     features: routeChains.flatMap((chain) =>
@@ -68,10 +90,11 @@ function buildLinesGeoJSON() {
         const fromPoint = pointById(chain.pointIds[i]);
         const toPoint = pointById(chain.pointIds[i + 1]);
         if (!fromPoint || !toPoint) return null;
+        const coordinates = seg.pathCoords?.length ? seg.pathCoords : [fromPoint.coords, toPoint.coords];
         return {
           type: 'Feature',
           properties: { distanceLabel: `${seg.distanceKm.toFixed(1)} km` },
-          geometry: { type: 'LineString', coordinates: [fromPoint.coords, toPoint.coords] },
+          geometry: { type: 'LineString', coordinates },
         };
       }).filter(Boolean)
     ),
@@ -228,13 +251,13 @@ export default function RouteAnimationLayer({ map, active }) {
         if (!mountedRef.current) return;
         const elapsed = now - startTime;
 
-        // Dash "mengalir" — pola-nya cuma ganti tiap ~60ms, TAPI frame
-        // animasi jalan tiap ~16ms (60fps). Tanpa guard ini,
-        // setPaintProperty terpanggil di SETIAP frame walau nilainya
-        // 3-4x berturut-turut sama persis — kerja MapLibre sia-sia.
-        // Guard `dashIndex !== lastDashIndex` cuma panggil setPaintProperty
-        // pas nilainya BENERAN beda.
-        const dashIndex = Math.floor(elapsed / 60) % DASH_SEQUENCE.length;
+        // Dash "mengalir" — pola-nya cuma ganti tiap ~140ms (sebelumnya
+        // 60ms, terasa terlalu cepat/gelisah untuk konten investigatif
+        // yang tenang). Frame animasi tetap jalan tiap ~16ms (60fps),
+        // guard `dashIndex !== lastDashIndex` di bawah tetap mencegah
+        // setPaintProperty terpanggil sia-sia di frame yang nilainya
+        // belum berubah.
+        const dashIndex = Math.floor(elapsed / 140) % DASH_SEQUENCE.length;
         if (dashIndex !== lastDashIndex) {
           if (map.getLayer('route-lines-layer')) {
             map.setPaintProperty('route-lines-layer', 'line-dasharray', DASH_SEQUENCE[dashIndex]);
@@ -243,10 +266,12 @@ export default function RouteAnimationLayer({ map, active }) {
         }
 
         // Ring pulsing di titik kasus — radius & opacity naik-turun tiap
-        // ~1.6 detik. Ini TETAP di-update tiap frame (bukan di-throttle
-        // seperti traveler) karena setPaintProperty jauh lebih murah
-        // daripada setData, dan pulsing butuh mulus di 60fps.
-        const pulsePhase = (elapsed % 1600) / 1600; // 0 → 1
+        // ~2.4 detik (sebelumnya 1.6 detik, dipercepat sesuai permintaan
+        // supaya nadanya lebih tenang, bukan berkedip gelisah). Ini TETAP
+        // di-update tiap frame (bukan di-throttle seperti traveler)
+        // karena setPaintProperty jauh lebih murah daripada setData, dan
+        // pulsing butuh mulus di 60fps.
+        const pulsePhase = (elapsed % 2400) / 2400; // 0 → 1
         const pulseRadius = 8 + pulsePhase * 14;
         const pulseOpacity = 0.4 * (1 - pulsePhase);
         if (map.getLayer('route-case-alert-ring')) {
@@ -257,7 +282,9 @@ export default function RouteAnimationLayer({ map, active }) {
         // Titik berjalan — di-throttle ke ~30fps (lihat TRAVELER_UPDATE_INTERVAL).
         if (now - lastTravelerUpdate >= TRAVELER_UPDATE_INTERVAL) {
           lastTravelerUpdate = now;
-          const travelDuration = 4000;
+          // 9 detik per lintasan penuh (sebelumnya 4 detik — kerasa
+          // terlalu cepat/tergesa untuk konten investigatif ini).
+          const travelDuration = 9000;
           const travelerFeatures = chainInterpolators.map((interpolate, i) => {
             const t = ((elapsed + i * 400) % travelDuration) / travelDuration;
             const pos = interpolate(t) ?? [0, 0];

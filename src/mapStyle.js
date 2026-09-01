@@ -40,6 +40,46 @@ export const mapStyle = {
   ],
 };
 
+// Katalog basemap alternatif — dipakai tab Peta Interaktif untuk opsi
+// "citra lain yang bisa dipilih". Source id & layer id SELALU 'satellite'
+// / 'satellite-layer' (sama dengan di atas) supaya gampang di-swap:
+// tinggal remove+re-add source itu saja waktu user ganti pilihan, tanpa
+// perlu sentuh layer overlay lain (AOI, kawasan hutan, dst) yang sudah
+// ditumpuk di atasnya. `esri-satellite` HARUS tetap index 0 — itu yang
+// dipakai sebagai default awal (lihat useMapEngine.js, useState(BASEMAP_
+// OPTIONS[0].id)), citra satelit polos bawaan, bukan varian lain.
+export const BASEMAP_OPTIONS = [
+  {
+    id: 'esri-satellite',
+    name: 'Esri World Imagery (Satelit)',
+    tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+    tileSize: 256,
+    attribution: 'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics',
+  },
+  {
+    id: 'esri-topo',
+    name: 'Esri World Topographic',
+    tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
+    tileSize: 256,
+    attribution: 'Tiles &copy; Esri — Source: Esri, HERE, Garmin, USGS',
+  },
+  {
+    // Basemap gelap — gaya visual yang sama dengan preset dark mapcn
+    // (lihat BasemapPicker.jsx), tapi tile-nya dari CARTO Dark Matter:
+    // gratis, tanpa API key, sama seperti dua basemap Esri di atas.
+    id: 'carto-dark',
+    name: 'Dark Matter (CARTO)',
+    tiles: [
+      'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      'https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+    ],
+    tileSize: 256,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+  },
+];
+
 // Info sumber citra untuk badge di peta — dipakai MapController.jsx
 // dan DashboardMap.jsx supaya teksnya konsisten di semua tab.
 //
@@ -54,9 +94,8 @@ export const mapStyle = {
 // 3. Wayback akan tunjukkan tanggal rilis citra yang tersedia untuk area itu
 // 4. Isi field `year` di bawah dengan tanggal/rentang yang kamu dapat
 //
-// TODO: ganti 'TODO: verifikasi via Wayback' dengan tahun/rentang asli.
 export const imagerySource = {
   name: 'Esri World Imagery',
   provider: 'Esri, Maxar, Earthstar Geographics',
-  year: 'TODO: verifikasi via Wayback',
+  year: 'citra terkini, tanggal bervariasi per lokasi',
 };

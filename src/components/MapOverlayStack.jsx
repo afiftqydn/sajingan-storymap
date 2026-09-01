@@ -7,9 +7,12 @@
 // Dipakai di kedua peta (Storymap & Peta Interaktif) supaya posisi dan
 // urutannya konsisten.
 //
-// `legendItems` opsional — di tab Peta Interaktif, legend sudah
-// terwakili oleh panel layer di kiri, jadi cukup kirim tanpa prop ini
-// (grup kanan-bawah otomatis cuma berisi sumber citra saja).
+// `legendItems` opsional. `legendCollapsible` (opsional, default false):
+// Peta Interaktif kirim `true` supaya legend punya tombol tutup/buka —
+// default-nya tetap TERBUKA (beda dari LayerPanel yang default
+// collapsed), pengguna yang pilih sendiri kalau mau ditutup. Storymap
+// (MapController.jsx) tidak mengoper ini, jadi tetap selalu terbuka
+// tanpa tombol toggle sama sekali seperti sebelumnya.
 //
 // `showInset` juga opsional — inset map cuma diminta buat tab Storymap,
 // JADI JANGAN nyalakan prop ini di DashboardMap.jsx (Peta Interaktif)
@@ -20,7 +23,7 @@ import MapLegend from './MapLegend.jsx';
 import InsetMap from './InsetMap.jsx';
 import { imagerySource } from '../mapStyle.js';
 
-export default function MapOverlayStack({ map, bearing, legendItems, embedded = false, showInset = false, insetHidden = false }) {
+export default function MapOverlayStack({ map, bearing, legendItems, legendCollapsible = false, embedded = false, showInset = false, insetHidden = false }) {
   const embeddedClass = embedded ? 'map-overlay--embedded' : '';
 
   return (
@@ -41,7 +44,9 @@ export default function MapOverlayStack({ map, bearing, legendItems, embedded = 
       </div>
 
       <div className={`map-overlay-bottom ${embeddedClass}`}>
-        {legendItems && legendItems.length > 0 && <MapLegend items={legendItems} />}
+        {legendItems && legendItems.length > 0 && (
+          <MapLegend items={legendItems} collapsible={legendCollapsible} />
+        )}
         <div className="map-source-badge">
           <div>Citra satelit: {imagerySource.name} ({imagerySource.year})</div>
           <div className="map-source-badge__provider">© {imagerySource.provider}</div>

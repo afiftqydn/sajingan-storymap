@@ -1,6 +1,16 @@
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './App.css';
+import chapters, { SECTION_LABELS } from './data/chapters.js';
+import { validateChapters, logValidationErrors } from './utils/validateChapters.js';
+
+// Validator ini sudah ditulis dari awal tapi sebelumnya tidak pernah
+// dipanggil di mana pun — jadi typo/salah bentuk data di chapters.js
+// (mis. field yang salah tipe) tidak pernah ketahuan otomatis, cuma
+// gagal diam-diam saat render. Sekarang dijalankan sekali di startup,
+// cuma nge-log ke console (tidak menghentikan render) supaya kelihatan
+// pas development tanpa mengubah perilaku untuk pengguna akhir.
+logValidationErrors(validateChapters(chapters, SECTION_LABELS));
 
 // CATATAN: sengaja TIDAK dibungkus <React.StrictMode>.
 //

@@ -9,10 +9,10 @@ import MapController from './MapController.jsx';
 
 // Layout: rail ikon tipis (kiri, selalu ada) → panggung (sisa lebar
 // layar) berisi peta FULL-BLEED di belakang + narasi mengambang di
-// atasnya sebagai popup semi-transparan (backdrop-blur). Beda dari
-// versi 3-kolom sebelumnya: narasi TIDAK lagi punya kolom solid sendiri
-// yang makan lebar tetap — dia cuma overlay tipis di atas peta, jadi
-// peta selalu dapat hampir seluruh layar (cuma dikurangi rail ikon).
+// atasnya sebagai popup semi-transparan (backdrop-blur). Narasi TIDAK
+// punya kolom solid sendiri yang makan lebar tetap — dia cuma overlay
+// tipis di atas peta, jadi peta selalu dapat hampir seluruh layar (cuma
+// dikurangi rail ikon).
 export default function Story() {
   const stepIds = useMemo(() => chapters.map((c) => c.id), []);
   const { activeStepId, containerRef } = useStepObserver(stepIds);
