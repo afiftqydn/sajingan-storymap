@@ -6,6 +6,7 @@ import MapOverlayStack from './MapOverlayStack.jsx';
 import RouteAnimationLayer from './RouteAnimationLayer.jsx';
 import { loadMapIcons, iconImageId } from '../utils/mapIcons.js';
 import { routePoints } from '../data/routes.js';
+import { getGeoJSONBounds } from '../utils/geojsonBounds.js';
 
 // Card popup mengambang di ATAS peta full-bleed (bukan lagi kolom
 // terpisah) — di SEMUA ukuran layar sekarang, bukan cuma tablet. Kalau
@@ -56,6 +57,10 @@ export default function MapController({ activeChapter, isOnCover }) {
   // Kalau chapter routes:true aktif SEBELUM icon selesai load, toggle visibility perlu diretry
   // begitu icon siap — tanpa ini icon mills/PoD tidak pernah nongol di chapter pertama.
   const iconsReadyRef = useRef(false);
+  // Loop rAF titik pulsing Lokasi Kasus (lihat 'case-point-ring' di
+  // bawah) — perlu dibatalkan waktu map di-unmount, sama seperti
+  // RouteAnimationLayer.jsx.
+  const casePulseRafRef = useRef(null);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -193,12 +198,43 @@ export default function MapController({ activeChapter, isOnCover }) {
         paint: { 'text-color': '#f4f1e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.4 },
       });
 
-      // Klik polygon Lokasi Kasus -> popup foto + info singkat. Cursor
-      // pointer ditambahkan juga supaya kelihatan area ini bisa diklik
-      // (sebelumnya tidak ada indikasi visual apa pun kalau polygon bisa
-      // berinteraksi).
-      map.on('mouseenter', 'case-highlight-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mouseleave', 'case-highlight-fill', () => { map.getCanvas().style.cursor = ''; });
+      // Titik Lokasi Kasus — pulsing (ring napas + inti statis), posisi
+      // di centroid tiap polygon studi-kasus. GANTI dari sebelumnya:
+      // foto+info dulu muncul waktu KLIK DI MANA PUN di area fill
+      // polygon (target klik kebesaran, kerasa "otomatis" ke-trigger
+      // begitu polygon disentuh). Sekarang polygon fill/line cuma
+      // highlight visual — foto+info CUMA keluar waktu titik pulsing
+      // ini yang diklik (lihat handler 'case-point-core' di bawah).
+      map.addSource('case-point', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+      });
+      map.addLayer({
+        id: 'case-point-ring',
+        type: 'circle',
+        source: 'case-point',
+        paint: { 'circle-radius': 8, 'circle-color': '#ff5a3c', 'circle-opacity': 0.35, 'circle-stroke-width': 0 },
+      });
+      map.addLayer({
+        id: 'case-point-core',
+        type: 'circle',
+        source: 'case-point',
+        paint: { 'circle-radius': 5, 'circle-color': '#ff5a3c', 'circle-stroke-width': 1.5, 'circle-stroke-color': '#0a0f0c' },
+      });
+      map.on('mouseenter', 'case-point-core', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'case-point-core', () => { map.getCanvas().style.cursor = ''; });
+
+      // Ring napas — radius & opacity naik-turun tiap 2.4 detik, pola
+      // sama dengan 'route-case-alert-ring' di RouteAnimationLayer.jsx.
+      const tickCasePulse = (now) => {
+        const pulsePhase = (now % 2400) / 2400;
+        if (map.getLayer('case-point-ring')) {
+          map.setPaintProperty('case-point-ring', 'circle-radius', 8 + pulsePhase * 10);
+          map.setPaintProperty('case-point-ring', 'circle-opacity', 0.4 * (1 - pulsePhase));
+        }
+        casePulseRafRef.current = requestAnimationFrame(tickCasePulse);
+      };
+      casePulseRafRef.current = requestAnimationFrame(tickCasePulse);
 
       // --- Overlay tematik (forest-cover, planted palm oil, kawasan hutan) ---
       // Masing-masing di-fetch sekali dari GeoJSON, lalu visibility-nya
@@ -249,7 +285,7 @@ export default function MapController({ activeChapter, isOnCover }) {
           .then((data) => { if (map.getSource(ov.id)) map.getSource(ov.id).setData(data); })
           .catch(() => {});
       });
-      map.on('click', 'case-highlight-fill', (e) => {
+      map.on('click', 'case-point-core', (e) => {
         const f = e.features[0];
         const p = f.properties;
         const photo = LOKASI_PHOTO[p.name];
@@ -364,6 +400,7 @@ export default function MapController({ activeChapter, isOnCover }) {
     mapRef.current = map;
     setMapInstance(map); // trigger render supaya MapScaleBar dapat instance map
     return () => {
+      if (casePulseRafRef.current) cancelAnimationFrame(casePulseRafRef.current);
       map.remove();
       mapRef.current = null;
     };
@@ -431,10 +468,27 @@ export default function MapController({ activeChapter, isOnCover }) {
         type: 'FeatureCollection',
         features: all.filter((f) => f.properties?.category === 'batas-wilayah'),
       });
-      cases.setData({
-        type: 'FeatureCollection',
-        features: all.filter((f) => f.properties?.category === 'studi-kasus'),
-      });
+      const caseFeatures = all.filter((f) => f.properties?.category === 'studi-kasus');
+      cases.setData({ type: 'FeatureCollection', features: caseFeatures });
+
+      // Titik pulsing diposisikan di centroid (tengah bbox) tiap polygon
+      // studi-kasus — lihat source 'case-point' di map.on('load') di atas.
+      const casePointSource = map.getSource('case-point');
+      if (casePointSource) {
+        const casePoints = caseFeatures
+          .map((f) => {
+            const bounds = getGeoJSONBounds({ type: 'FeatureCollection', features: [f] });
+            if (!bounds) return null;
+            const [[minX, minY], [maxX, maxY]] = bounds;
+            return {
+              type: 'Feature',
+              properties: f.properties,
+              geometry: { type: 'Point', coordinates: [(minX + maxX) / 2, (minY + maxY) / 2] },
+            };
+          })
+          .filter(Boolean);
+        casePointSource.setData({ type: 'FeatureCollection', features: casePoints });
+      }
 
       // Ikon Mill/PoD cuma tampil di chapter yang memang bicara soal
       // rantai pasok (routes: true) — lihat chapters.js.

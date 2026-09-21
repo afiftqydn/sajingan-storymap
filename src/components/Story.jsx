@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import chapters from '../data/chapters.js';
 import { useStepObserver } from '../hooks/useStepObserver.js';
-import { useScrollActivity } from '../hooks/useScrollActivity.js';
 import Step from './Step.jsx';
 import StepIndicator from './StepIndicator.jsx';
 import ScrollProgress from './ScrollProgress.jsx';
@@ -16,10 +15,6 @@ import MapController from './MapController.jsx';
 export default function Story() {
   const stepIds = useMemo(() => chapters.map((c) => c.id), []);
   const { activeStepId, containerRef } = useStepObserver(stepIds);
-  // Nav rail cuma kelihatan WAKTU aktif di-scroll — begitu diam
-  // (termasuk pas awal buka halaman, di cover, belum ada scroll sama
-  // sekali), otomatis sembunyi lagi ~1.2 detik kemudian.
-  const isScrolling = useScrollActivity(containerRef);
 
   const activeChapter = chapters.find((c) => c.id === activeStepId) ?? chapters[0];
 
@@ -42,7 +37,6 @@ export default function Story() {
         chapters={chapters}
         activeStepId={activeStepId}
         onJump={handleJump}
-        hidden={!isScrolling}
       />
 
       <div className="story__stage">

@@ -127,7 +127,14 @@ function addMapLayer(map, layer, visible, popupRef, clickHandlers, failedIcons, 
     map.addLayer({
       id: `${layer.id}-line`, type: 'line', source: layer.id,
       layout: { visibility: vis },
-      paint: { 'line-color': layer.fillColorExpression ?? layer.color, 'line-width': layer.outlineOnly ? 2 : lineWidth },
+      paint: {
+        'line-color': layer.fillColorExpression ?? layer.color,
+        'line-width': layer.outlineOnly ? 1.5 : lineWidth,
+        // outlineOnly (Batas Desa) dashed — sebelumnya solid di sini,
+        // padahal dashed di tab Storymap (MapController.jsx) untuk
+        // layer yang SAMA persis. Disamakan biar konsisten dua tab.
+        ...(layer.outlineOnly ? { 'line-dasharray': [2, 2] } : {}),
+      },
     });
     // Label default-visible begitu layer dinyalakan (tidak perlu diklik
     // dulu) — dipakai layer yang mendeklarasikan `labelField` di layers.js.
