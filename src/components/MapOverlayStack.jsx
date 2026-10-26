@@ -29,15 +29,14 @@ export default function MapOverlayStack({ map, bearing, legendItems, legendColla
   return (
     <>
       <div className={`map-overlay-top ${embeddedClass}`}>
-        <div
-          className="map-north-arrow"
-          style={{ transform: `rotate(${-bearing}deg)` }}
-          aria-label="Arah utara"
-        >
-          <svg viewBox="0 0 32 40" width="26" height="32">
-            <polygon points="16,0 24,32 16,24 8,32" fill="currentColor" />
-            <text x="16" y="8" textAnchor="middle" fontSize="10" className="map-north-arrow__label" fontWeight="700">N</text>
-          </svg>
+        <div className={`map-north-arrow${Math.round(bearing) % 360 !== 0 ? ' is-rotated' : ''}`} aria-label="Arah utara">
+          <span className="map-north-arrow__needle" style={{ transform: `rotate(${-bearing}deg)` }}>
+            <svg viewBox="0 0 24 32" width="20" height="28" aria-hidden="true">
+              <path d="M12 2 L20 26 L12 20 L4 26 Z" fill="currentColor" />
+              <path d="M12 2 L12 20 L4 26 Z" fill="rgb(var(--zl-bg-rgb))" opacity="0.45" />
+            </svg>
+            <span>N</span>
+          </span>
         </div>
         <MapScaleBar map={map} />
         {showInset && <InsetMap mainMap={map} hidden={insetHidden} />}

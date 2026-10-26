@@ -390,87 +390,86 @@
   bottom: 12px;
 }
 
+/* Furnitur peta (kompas, skala, legenda, sumber): gaya sama dengan orphan-case. */
 .map-north-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: rgb(var(--zl-surface-rgb) / 0.9); /* semi-transparan, bukan panel solid */
-  border: 1px solid var(--zl-surface-3);
-  border-radius: 8px;
-  color: var(--zl-text); /* SVG polygon pakai fill="currentColor" — ikut ini */
-  transition: transform 0.3s ease;
+  display: grid;
+  justify-items: center;
+  width: 34px;
+  padding: 5px 0 3px;
+  color: var(--zl-text);
+  border-radius: 50%;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.85));
+  font: 700 10px var(--zl-font-mono);
 }
-.map-north-arrow__label {
-  /* Kebalikan dari warna segitiga (--zl-bg, bukan --zl-text) —
-     supaya "N" selalu kontras DI ATAS segitiga di kedua tema, bukan
-     ikut warna yang sama seperti segitiga (yang bikin teksnya hilang). */
-  fill: var(--zl-bg);
-}
+.map-north-arrow__needle { display: grid; justify-items: center; transform-origin: 50% 50%; }
+.map-north-arrow.is-rotated .map-north-arrow__needle { color: var(--zl-accent); }
 
 .map-scale-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  display: grid;
+  justify-items: start;
   gap: 3px;
-  background: rgb(var(--zl-surface-rgb) / 0.9); /* semi-transparan, bukan panel solid */
+  width: max-content;
+  padding: 6px 10px;
+  color: var(--zl-text-muted);
+  background: rgb(var(--zl-surface-rgb) / 0.94);
   border: 1px solid var(--zl-surface-3);
   border-radius: 6px;
-  padding: 6px 10px;
+  font: 10px var(--zl-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 .map-scale-bar__bar {
   height: 4px;
-  background: var(--zl-text);
-  border-left: 2px solid var(--zl-text);
-  border-right: 2px solid var(--zl-text);
+  border: 1px solid var(--zl-text-secondary);
+  border-top: 0;
 }
-.map-scale-bar__label {
-  font-family: var(--zl-font-mono);
-  font-size: 10px;
-  color: var(--zl-text-secondary);
-}
+.map-scale-bar__label { color: var(--zl-accent); font-size: 13px; letter-spacing: 0; text-transform: none; }
 
 .map-legend {
-  background: rgb(var(--zl-surface-rgb) / 0.9); /* semi-transparan, bukan panel solid */
+  width: max-content;
+  min-width: 140px;
+  max-width: 210px;
+  overflow-y: auto;
+  color: var(--zl-text);
+  background: rgb(var(--zl-surface-rgb) / 0.94);
   border: 1px solid var(--zl-surface-3);
   border-radius: 8px;
-  padding: 10px 12px;
-  min-width: 160px;
+  padding: 0 9px 7px;
+  scrollbar-width: thin;
 }
 .map-legend__title {
   display: block;
-  font-family: var(--zl-font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  padding: 5px 0;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--zl-surface-3);
+  font: 600 9.5px var(--zl-font-sans);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--zl-text-secondary);
-  margin-bottom: 6px;
 }
-/* Legend collapsible (Peta Interaktif — MapLegend.jsx, prop
-   `collapsible`) — Storymap tidak pakai prop ini jadi rulenya tidak
-   berdampak di sana. */
-.map-legend.is-collapsed { padding-bottom: 10px; }
+/* Legend collapsible (Peta Interaktif — MapLegend.jsx, prop `collapsible`). */
+.map-legend.is-collapsed { padding-bottom: 0; }
+.map-legend.is-collapsed .map-legend__title { border-bottom: 0; margin-bottom: 0; }
 .map-legend__toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 18px;
   width: 100%;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
 }
-.map-legend.is-collapsed .map-legend__toggle { margin-bottom: 0; }
-.map-legend__toggle .map-legend__title { margin-bottom: 0; }
+.map-legend__toggle .map-legend__title { flex: 1; }
+.map-legend__toggle:hover .map-legend__title { color: var(--zl-text); }
 .map-legend__item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--zl-text);
+  gap: 7px;
+  font-size: 10.5px;
+  color: var(--zl-text-secondary);
   padding: 2px 0;
 }
 .map-legend__swatch {
@@ -495,21 +494,17 @@
 }
 
 .map-source-badge {
-  background: rgb(var(--zl-surface-rgb) / 0.9); /* semi-transparan, bukan panel solid */
-  color: var(--zl-text-secondary);
-  font-family: var(--zl-font-mono);
-  font-size: 10px;
-  padding: 4px 8px;
-  border-radius: 4px;
+  width: max-content;
+  max-width: 210px;
+  padding: 6px 10px;
+  color: var(--zl-text-muted);
+  background: rgb(var(--zl-surface-rgb) / 0.94);
   border: 1px solid var(--zl-surface-3);
-  text-align: right;
-  max-width: 200px;
+  border-radius: 6px;
+  font: 10px/1.45 var(--zl-font-mono);
+  text-align: left;
 }
-.map-source-badge__provider {
-  font-size: 9px;
-  opacity: 0.8;
-  margin-top: 2px;
-}
+.map-source-badge__provider { font-size: 9px; color: var(--zl-text-muted); margin-top: 2px; }
 
 /* ---------- Stats ---------- */
 /* Sengaja dibuat compact/kalem (bukan angka besar mencolok) — di
@@ -1466,11 +1461,10 @@
 
 /* Overlay kartografi — ukuran di HP */
 @media (max-width: 640px) {
-  .map-north-arrow { width: 32px; height: 32px; }
-  .map-north-arrow svg { width: 18px; height: 22px; }
-  .map-scale-bar { padding: 4px 8px; font-size: 10px; }
-  .map-source-badge { font-size: 9px; max-width: 130px; }
-  .map-legend { min-width: 120px; padding: 7px 9px; font-size: 11px; }
+  .map-north-arrow { width: 28px; }
+  .map-north-arrow svg { width: 16px; height: 22px; }
+  .map-source-badge { max-width: 140px; }
+  .map-legend { min-width: 120px; max-width: 170px; }
   .inset-map { width: 88px; height: 65px; }
 }
 
