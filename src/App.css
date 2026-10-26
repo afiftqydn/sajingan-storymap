@@ -618,14 +618,21 @@
 }
 
 /* ---------- Tab "Peta Interaktif" (full page) ---------- */
-.interactive-map-view {
-  height: 100vh;
-  padding-top: 72px;
-}
+.interactive-map-view { height: 100vh; }
 .interactive-map-view .dashboard-map {
-  height: calc(100vh - 72px - 16px);
-  margin: 0 16px 16px;
+  height: 100vh;
+  border: 0;
+  border-radius: 0;
 }
+
+/* Peta Interaktif full-bleed: header transparan di atas peta. */
+.app[data-tab='peta'] .tab-switcher {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: blur(6px);
+}
+.app[data-tab='peta'] .tab-switcher button { text-shadow: 0 1px 4px rgb(0 0 0 / 0.8); }
+.app[data-tab='peta'] .tab-switcher button.is-active { background: rgb(var(--zl-accent-rgb) / 0.22); }
 
 /* ---------- Dashboard map (kartu peta relative — kanvas + panel
    floating di dalamnya, BUKAN edge-to-edge lagi) ---------- */
@@ -1374,6 +1381,8 @@
   }
 }
 @media (max-width: 900px) {
+  .interactive-map-view .dashboard-map__panel-toggle { top: 56px; }
+  .map-overlay-top.map-overlay--embedded { top: 56px; }
   .dashboard-map__layer-panel {
     width: clamp(190px, 28vw, 260px);
     font-size: 12px;

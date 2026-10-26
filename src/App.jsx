@@ -30,7 +30,7 @@ export default function App() {
   const ActiveView = VIEWS[activeTab];
 
   return (
-    <div className="app">
+    <div className="app" data-tab={activeTab}>
       <TabSwitcher activeTab={activeTab} onChange={setActiveTab} />
       <ErrorBoundary key={activeTab}>
         <Suspense fallback={<TabFallback />}>
