@@ -7,6 +7,7 @@ import RouteAnimationLayer from './RouteAnimationLayer.jsx';
 import { loadMapIcons, iconImageId } from '../utils/mapIcons.js';
 import { routePoints } from '../data/routes.js';
 import { getGeoJSONBounds } from '../utils/geojsonBounds.js';
+import { C } from '../theme.js';
 
 // Card popup mengambang di ATAS peta full-bleed (bukan lagi kolom
 // terpisah) — di SEMUA ukuran layar sekarang, bukan cuma tablet. Kalau
@@ -147,7 +148,7 @@ export default function MapController({ activeChapter, isOnCover }) {
         id: 'admin-boundary-line',
         type: 'line',
         source: 'admin-boundary',
-        paint: { 'line-color': '#f2f0e8', 'line-width': 1.5, 'line-dasharray': [2, 2] },
+        paint: { 'line-color': C.text, 'line-width': 1.5, 'line-dasharray': [2, 2] },
       });
       // Label nama desa (field NAMOBJ, lihat batas-desa.geojson) —
       // default-visible, konsisten dengan label lain di tab Peta
@@ -163,7 +164,7 @@ export default function MapController({ activeChapter, isOnCover }) {
           'text-size': 11,
           'symbol-placement': 'point',
         },
-        paint: { 'text-color': '#f2f0e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.2 },
+        paint: { 'text-color': C.text, 'text-halo-color': C.bg, 'text-halo-width': 1.2 },
       });
       // WARNA: disamakan jadi #ff5a3c (oranye-merah) — sebelumnya hijau
       // (#7ed957) di sini, padahal Peta Interaktif & RouteAnimationLayer
@@ -175,13 +176,13 @@ export default function MapController({ activeChapter, isOnCover }) {
         id: 'case-highlight-fill',
         type: 'fill',
         source: 'case-highlight',
-        paint: { 'fill-color': '#ff5a3c', 'fill-opacity': 0.28 },
+        paint: { 'fill-color': C.accent, 'fill-opacity': 0.28 },
       });
       map.addLayer({
         id: 'case-highlight-line',
         type: 'line',
         source: 'case-highlight',
-        paint: { 'line-color': '#ff5a3c', 'line-width': 2 },
+        paint: { 'line-color': C.accent, 'line-width': 2 },
       });
       // Label nama lokasi ('Lokasi 1'/'2'/'3') default-visible di atas
       // area highlight — konsisten dengan tab Peta Interaktif.
@@ -195,7 +196,7 @@ export default function MapController({ activeChapter, isOnCover }) {
           'text-size': 12,
           'symbol-placement': 'point',
         },
-        paint: { 'text-color': '#f4f1e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.4 },
+        paint: { 'text-color': C.text, 'text-halo-color': C.bg, 'text-halo-width': 1.4 },
       });
 
       // Titik Lokasi Kasus — pulsing (ring napas + inti statis), posisi
@@ -213,13 +214,13 @@ export default function MapController({ activeChapter, isOnCover }) {
         id: 'case-point-ring',
         type: 'circle',
         source: 'case-point',
-        paint: { 'circle-radius': 8, 'circle-color': '#ff5a3c', 'circle-opacity': 0.35, 'circle-stroke-width': 0 },
+        paint: { 'circle-radius': 8, 'circle-color': C.accent, 'circle-opacity': 0.35, 'circle-stroke-width': 0 },
       });
       map.addLayer({
         id: 'case-point-core',
         type: 'circle',
         source: 'case-point',
-        paint: { 'circle-radius': 5, 'circle-color': '#ff5a3c', 'circle-stroke-width': 1.5, 'circle-stroke-color': '#0a0f0c' },
+        paint: { 'circle-radius': 5, 'circle-color': C.accent, 'circle-stroke-width': 1.5, 'circle-stroke-color': C.bg },
       });
       map.on('mouseenter', 'case-point-core', () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'case-point-core', () => { map.getCanvas().style.cursor = ''; });
@@ -277,7 +278,7 @@ export default function MapController({ activeChapter, isOnCover }) {
               'symbol-placement': 'point',
               'text-allow-overlap': false,
             },
-            paint: { 'text-color': '#f4f1e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.2 },
+            paint: { 'text-color': C.text, 'text-halo-color': C.bg, 'text-halo-width': 1.2 },
           });
         }
         fetch(ov.path)
@@ -331,7 +332,7 @@ export default function MapController({ activeChapter, isOnCover }) {
                 'text-anchor': 'top',
                 'text-allow-overlap': false,
               },
-              paint: { 'text-color': '#f4f1e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.2 },
+              paint: { 'text-color': C.text, 'text-halo-color': C.bg, 'text-halo-width': 1.2 },
             });
           } else {
             map.addLayer({
@@ -341,9 +342,9 @@ export default function MapController({ activeChapter, isOnCover }) {
               layout: { visibility: 'none' },
               paint: {
                 'circle-radius': 6,
-                'circle-color': ['match', ['get', 'type'], 'mill', '#e0c14d', 'pod', '#f2c94c', '#f2c94c'],
+                'circle-color': ['match', ['get', 'type'], 'mill', C.accentStrong, 'pod', C.text, C.text],
                 'circle-stroke-width': 1.5,
-                'circle-stroke-color': '#0a0f0c',
+                'circle-stroke-color': C.bg,
               },
             });
           }
@@ -520,18 +521,18 @@ export default function MapController({ activeChapter, isOnCover }) {
     const categories = new Set((activeChapter?.polygons ?? []).map((f) => f.properties?.category));
     const items = [];
     if (categories.has('batas-wilayah')) {
-      items.push({ label: 'Batas Desa', color: '#f2f0e8', type: 'line' });
+      items.push({ label: 'Batas Desa', color: C.text, type: 'line' });
     }
     if (categories.has('studi-kasus')) {
-      items.push({ label: 'Lokasi Kasus', color: '#ff5a3c', type: 'fill' });
+      items.push({ label: 'Lokasi Kasus', color: C.accent, type: 'fill' });
     }
     if (activeChapter?.routes) {
       // Tidak ada entri 'Lokasi Kasus' terpisah di sini lagi — sudah
       // diwakili entri 'studi-kasus' di atas (sekarang warnanya SAMA,
       // #ff5a3c, jadi entri ganda cuma bikin legenda bertumpuk untuk
       // hal yang sama persis).
-      items.push({ label: 'Mill/PKS', color: '#e0c14d', type: 'fill' });
-      items.push({ label: 'PoD/Pengepul', color: '#f2c94c', type: 'fill' });
+      items.push({ label: 'Mill/PKS', color: C.accentStrong, type: 'fill' });
+      items.push({ label: 'PoD/Pengepul', color: C.text, type: 'fill' });
     }
     const overlaySet = new Set(activeChapter?.overlays ?? []);
     if (overlaySet.has('storymap-forest')) items.push({ label: 'Tutupan Hutan', color: '#02ad00', type: 'fill' });

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { LAYER_CATEGORIES } from '../data/layers.js';
 import BasemapPicker from './BasemapPicker.jsx';
+import { C } from '../theme.js';
 
 // Diekstrak dari DashboardMap.jsx (dulu JSX panel layer ada inline di
 // sana). Sekarang cuma satu pemanggil (Peta Interaktif) — Dashboard
@@ -196,7 +197,7 @@ export default function LayerPanel({
                   checked={showRoutePrediction}
                   onChange={onToggleRoutePrediction}
                 />
-                <span className="map-legend__swatch map-legend__swatch--fill" style={{ background: '#ff5a3c' }} />
+                <span className="map-legend__swatch map-legend__swatch--fill" style={{ background: C.accent }} />
                 Prediksi Supply Chain
               </label>
             )}

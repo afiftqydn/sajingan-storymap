@@ -1,5 +1,16 @@
+// CSS lebih dulu: theme.js membaca token warna saat modul lain dievaluasi.
+import '@fontsource-variable/geist/wght.css';
+import '@fontsource-variable/geist-mono/wght.css';
+import '@fontsource-variable/space-grotesk/wght.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import '@fontsource/michroma/400.css';
+import './styles/tokens.css';
+import './styles/base.css';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
+// Setelah App: maplibre-gl.css (diimpor komponen peta) harus kalah dari aturan kita.
 import './App.css';
 import chapters, { SECTION_LABELS } from './data/chapters.js';
 import { validateChapters, logValidationErrors } from './utils/validateChapters.js';

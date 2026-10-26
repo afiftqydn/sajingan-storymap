@@ -79,8 +79,10 @@ sajingan-storymap/
 ├── src/
 │   ├── main.jsx             # render <App /> ke halaman — jarang perlu diedit
 │   ├── App.jsx               # shell 2 tab (TabSwitcher + StoryView/DashboardView)
-│   ├── App.css               # SEMUA styling ada di sini
-│   ├── theme.js               # warna untuk peta (MapLibre tidak baca CSS var())
+│   ├── styles/tokens.css      # token warna, font, gerak (gaya orphan-case) — sumber warna tunggal
+│   ├── styles/base.css        # reset, tipografi dasar, loading state
+│   ├── App.css                # styling komponen, hanya pakai token --zl-*
+│   ├── theme.js               # C.accent, C.bg, … = token CSS untuk MapLibre & Recharts
 │   ├── mapStyle.js            # basemap satelit, dipakai KEDUA tab
 │   ├── data/                  # ============ FILE YANG PALING SERING DIEDIT ============
 │   │   ├── polygons.js          # koordinat: batas kecamatan, 3 lokasi kasus
@@ -113,7 +115,7 @@ sajingan-storymap/
 ```
 
 **Aturan penting:** koordinat cuma hidup di `polygons.js`, basemap cuma di
-`mapStyle.js`, warna cuma di `theme.js` + blok `:root` `App.css`. Kalau
+`mapStyle.js`, warna cuma di `styles/tokens.css`. Kalau
 nanti butuh ubah salah satu, cari file-nya di sini dulu — jangan
 hardcode di komponen.
 
@@ -221,23 +223,17 @@ harus tetap ada di suatu tempat yang kelihatan. Isinya diatur di
 `MapOverlayStack.jsx`.
 
 ### Ubah warna & font
-- Warna umum UI + font: blok `:root` di `src/App.css` (dark, default) dan
-  blok `html[data-theme='light']` tepat di bawahnya (light mode).
-- Warna yang dipakai peta (paint MapLibre): `src/theme.js` — **tidak**
-  ikut berubah antar mode, karena backdrop-nya selalu citra satelit.
-- **Ubah keduanya bareng** kalau ganti warna utama — MapLibre tidak bisa
-  baca CSS `var()`.
-- Ada dua token accent: `--color-accent` (buat background/border/fill —
-  boleh sama di kedua mode) dan `--color-accent-text` (buat WARNA TEKS —
-  harus beda per mode supaya kontras tetap aman: hijau terang di dark,
-  hijau lebih gelap di light). Kalau nambah elemen baru yang teksnya
-  pakai warna accent, pakai `--color-accent-text`, bukan `--color-accent`.
-
-### Toggle dark/light mode
-Sudah otomatis jalan — tombol bulat kanan-atas (`ThemeToggle.jsx`).
-State disimpan di `localStorage`, jadi pilihan user tidak reset tiap buka
-ulang. Kalau mau ubah warna light mode, edit blok
-`html[data-theme='light']` di `App.css` (lihat poin di atas).
+- Satu sumber: `src/styles/tokens.css` (token `--zl-*`, sama dengan orphan-case).
+  Warna disimpan sebagai kanal RGB (`--zl-accent-rgb`) supaya bisa diberi
+  opasitas: `rgb(var(--zl-accent-rgb) / 0.16)`.
+- MapLibre dan Recharts butuh string warna, bukan `var()`. Pakai `C` dari
+  `src/theme.js` (`C.accent`, `C.bg`, `C.accentStrong`, …); nilainya dibaca
+  dari token yang sama, jadi tidak ada salinan warna.
+- `main.jsx` mengimpor tokens sebelum `App` (theme.js membaca token saat
+  modul dievaluasi) dan `App.css` sesudah `App` (supaya menang atas
+  `maplibre-gl.css`). Jangan ubah urutan itu.
+- Hanya tema gelap. Warna kategori data (status kawasan hutan, dll.) di
+  `data/layers.js` memang tetap kartografis.
 
 ### Beri foto ruang lebih besar di satu chapter
 Tambahkan `mediaLayout: 'wide'` di objek chapter (`chapters.js`). Card

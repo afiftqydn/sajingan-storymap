@@ -1,0 +1,65 @@
+/*
+ * Token desain Zero Latitude (gaya orphan-case). Satu-satunya sumber warna;
+ * peta (MapLibre) membaca nilai ini lewat src/theme.js. Satu-satunya tempat nilai warna, gerak,
+ * dan lapisan didefinisikan. Warna disimpan sebagai kanal RGB supaya Tailwind
+ * bisa memberi opasitas (bg-surface/80).
+ */
+:root {
+  --zl-bg-rgb: 23 27 24;
+  --zl-surface-rgb: 29 34 30;
+  --zl-surface-2-rgb: 36 42 37;
+  --zl-surface-3-rgb: 52 58 53;
+  --zl-text-rgb: 238 236 228;
+  --zl-text-secondary-rgb: 146 149 141;
+  --zl-text-muted-rgb: 112 115 108;
+  --zl-accent-rgb: 215 165 90;
+  --zl-accent-strong-rgb: 169 149 105;
+  --zl-moss-rgb: 72 89 63;
+  --zl-earth-rgb: 169 149 105;
+  --zl-warning-rgb: 215 165 90;
+  --zl-critical-rgb: 148 60 58;
+  --zl-slate-rgb: 70 90 111;
+
+  --zl-bg: rgb(var(--zl-bg-rgb));
+  --zl-surface: rgb(var(--zl-surface-rgb));
+  --zl-surface-2: rgb(var(--zl-surface-2-rgb));
+  --zl-surface-3: rgb(var(--zl-surface-3-rgb));
+  --zl-text: rgb(var(--zl-text-rgb));
+  --zl-text-secondary: rgb(var(--zl-text-secondary-rgb));
+  --zl-text-muted: rgb(var(--zl-text-muted-rgb));
+  --zl-accent: rgb(var(--zl-accent-rgb));
+  --zl-accent-strong: rgb(var(--zl-accent-strong-rgb));
+  --zl-moss: rgb(var(--zl-moss-rgb));
+  --zl-earth: rgb(var(--zl-earth-rgb));
+  --zl-warning: rgb(var(--zl-warning-rgb));
+  --zl-critical: rgb(var(--zl-critical-rgb));
+  --zl-slate: rgb(var(--zl-slate-rgb));
+
+  --zl-font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --zl-font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --zl-font-chrome: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --zl-font-chrome-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --zl-font-brand: 'Eurostile Extended', 'Eurostile', 'Michroma', ui-sans-serif, sans-serif;
+
+  --zl-dur-fast: 150ms;
+  --zl-dur-base: 220ms;
+  --zl-dur-slow: 400ms;
+  --zl-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --zl-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --zl-z-map-overlay: 10;
+  --zl-z-map-control: 12;
+  --zl-z-panel: 20;
+  --zl-z-panel-raised: 22;
+  --zl-z-drawer: 25;
+  --zl-z-header: 35;
+  --zl-z-skip-link: 100;
+
+  --zl-chart-olive: var(--zl-accent);
+  --zl-chart-forest: var(--zl-accent-strong);
+  --zl-chart-moss: var(--zl-moss);
+  --zl-chart-earth: var(--zl-earth);
+  --zl-chart-warning: var(--zl-warning);
+  --zl-chart-critical: var(--zl-critical);
+  --zl-chart-track: var(--zl-surface-2);
+}

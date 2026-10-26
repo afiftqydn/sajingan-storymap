@@ -2,18 +2,16 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, LabelList,
 } from 'recharts';
-import { getChartColors, chartCommonProps } from './chartTheme.js';
-import { useThemeContext } from '../../hooks/ThemeContext.js';
+import { chartColors, chartCommonProps } from './chartTheme.js';
 import { deforestationTrend } from '../../data/reportData.js';
 
 export default function DeforestationTrendChart() {
-  const theme = useThemeContext();
-  const c = getChartColors(theme);
+  const c = chartColors();
   const peak = Math.max(...deforestationTrend.map((d) => d.lossHa));
 
   return (
     <div>
-      <p style={{ color: c.text, fontSize: 11, marginBottom: 8, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+      <p style={{ color: c.text, fontSize: 11, marginBottom: 8, fontFamily: 'var(--zl-font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
         Deforestasi per tahun (ha) — Kec. Sajingan Besar
       </p>
       <ResponsiveContainer width="100%" height={180}>

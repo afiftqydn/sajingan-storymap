@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import { mapStyle } from '../mapStyle.js';
+import { C } from '../theme.js';
 
 // TODO: sesuaikan kalau area fokus utama berubah signifikan dari
 // Sajingan Besar. Zoom SENGAJA jauh lebih rendah dari peta utama —
@@ -49,13 +50,13 @@ export default function InsetMap({ mainMap, hidden }) {
         id: 'inset-viewport-fill',
         type: 'fill',
         source: 'inset-viewport-box',
-        paint: { 'fill-color': '#7ed957', 'fill-opacity': 0.2 },
+        paint: { 'fill-color': C.accent, 'fill-opacity': 0.2 },
       });
       inset.addLayer({
         id: 'inset-viewport-line',
         type: 'line',
         source: 'inset-viewport-box',
-        paint: { 'line-color': '#7ed957', 'line-width': 1.5 },
+        paint: { 'line-color': C.accent, 'line-width': 1.5 },
       });
       setInsetReady(true);
     });

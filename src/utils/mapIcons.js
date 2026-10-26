@@ -5,25 +5,27 @@
 // symbol yang pakai `icon-image` ditambahkan, dan itu proses ASYNC
 // (nunggu <img> selesai load), makanya loadMapIcons() return Promise.
 
-const MILL_ICON_SVG = `
+import { C } from '../theme.js';
+
+const MILL_ICON_SVG = () => `
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <rect x="5" y="16" width="22" height="12" rx="1" fill="#e0c14d" stroke="#0a0f0c" stroke-width="1.5"/>
-  <rect x="9" y="9" width="4" height="8" fill="#e0c14d" stroke="#0a0f0c" stroke-width="1.5"/>
-  <rect x="16" y="5" width="4" height="12" fill="#e0c14d" stroke="#0a0f0c" stroke-width="1.5"/>
-  <circle cx="11" cy="7" r="2" fill="#f2f0e8" stroke="#0a0f0c" stroke-width="1"/>
-  <circle cx="18" cy="3.5" r="2" fill="#f2f0e8" stroke="#0a0f0c" stroke-width="1"/>
+  <rect x="5" y="16" width="22" height="12" rx="1" fill="${C.accentStrong}" stroke="${C.bg}" stroke-width="1.5"/>
+  <rect x="9" y="9" width="4" height="8" fill="${C.accentStrong}" stroke="${C.bg}" stroke-width="1.5"/>
+  <rect x="16" y="5" width="4" height="12" fill="${C.accentStrong}" stroke="${C.bg}" stroke-width="1.5"/>
+  <circle cx="11" cy="7" r="2" fill="${C.text}" stroke="${C.bg}" stroke-width="1"/>
+  <circle cx="18" cy="3.5" r="2" fill="${C.text}" stroke="${C.bg}" stroke-width="1"/>
 </svg>`.trim();
 
-const POD_ICON_SVG = `
+const POD_ICON_SVG = () => `
 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
   <path d="M16 3C10.5 3 6 7.5 6 13c0 7.5 10 16 10 16s10-8.5 10-16c0-5.5-4.5-10-10-10z"
-        fill="#4d8fe0" stroke="#0a0f0c" stroke-width="1.5"/>
-  <circle cx="16" cy="13" r="4.5" fill="#f2f0e8"/>
+        fill="${C.slate}" stroke="${C.bg}" stroke-width="1.5"/>
+  <circle cx="16" cy="13" r="4.5" fill="${C.text}"/>
 </svg>`.trim();
 
 const ICONS = {
-  mill: { id: 'icon-mill', svg: MILL_ICON_SVG },
-  pod: { id: 'icon-pod', svg: POD_ICON_SVG },
+  mill: { id: 'icon-mill', get svg() { return MILL_ICON_SVG(); } },
+  pod: { id: 'icon-pod', get svg() { return POD_ICON_SVG(); } },
 };
 
 function loadOneIcon(map, key) {

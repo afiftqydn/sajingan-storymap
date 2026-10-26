@@ -1,6 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { getChartColors } from './chartTheme.js';
-import { useThemeContext } from '../../hooks/ThemeContext.js';
+import { chartColors } from './chartTheme.js';
 
 // Dari laporan: 304.76 ha deforestasi peat forest, 140.48 ha (46.1%) jadi sawit
 const PEAT_DATA = [
@@ -27,13 +26,12 @@ function CustomLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, name
 }
 
 export default function ForestShareDonut() {
-  const theme = useThemeContext();
-  const c = getChartColors(theme);
+  const c = chartColors();
 
   return (
     <div style={{ display: 'flex', gap: 8 }}>
       <div style={{ flex: 1 }}>
-        <p style={{ color: c.text, fontSize: 10, textAlign: 'center', marginBottom: 4, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Tipe deforestasi</p>
+        <p style={{ color: c.text, fontSize: 10, textAlign: 'center', marginBottom: 4, fontFamily: 'var(--zl-font-mono)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Tipe deforestasi</p>
         <ResponsiveContainer width="100%" height={150}>
           <PieChart>
             <Pie data={FOREST_TYPE_DATA} cx="50%" cy="50%" outerRadius={56} dataKey="value"
@@ -47,7 +45,7 @@ export default function ForestShareDonut() {
         </ResponsiveContainer>
       </div>
       <div style={{ flex: 1 }}>
-        <p style={{ color: c.danger, fontSize: 10, textAlign: 'center', marginBottom: 4, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Nasib gambut yang hilang</p>
+        <p style={{ color: c.danger, fontSize: 10, textAlign: 'center', marginBottom: 4, fontFamily: 'var(--zl-font-mono)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Nasib gambut yang hilang</p>
         <ResponsiveContainer width="100%" height={150}>
           <PieChart>
             <Pie data={PEAT_DATA} cx="50%" cy="50%" outerRadius={56} dataKey="value"

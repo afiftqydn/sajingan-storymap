@@ -6,6 +6,7 @@ import { loadMapIcons, iconImageId } from '../utils/mapIcons.js';
 import { parseGeoFile, inferGeometryType } from '../utils/parseGeoFile.js';
 import { getGeoJSONBounds } from '../utils/geojsonBounds.js';
 import { routePoints } from '../data/routes.js';
+import { C } from '../theme.js';
 
 // Diekstrak dari DashboardMap.jsx supaya mesin peta (init MapLibre,
 // layer catalog, upload, toggle, opacity) bisa dipakai ULANG di lebih
@@ -149,7 +150,7 @@ function addMapLayer(map, layer, visible, popupRef, clickHandlers, failedIcons, 
           'symbol-placement': 'point',
           'text-allow-overlap': false,
         },
-        paint: { 'text-color': '#f4f1e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.3 },
+        paint: { 'text-color': C.text, 'text-halo-color': C.bg, 'text-halo-width': 1.3 },
       });
     }
     // outlineOnly tidak punya layer fill buat diklik — pasang listener
@@ -185,7 +186,7 @@ function addMapLayer(map, layer, visible, popupRef, clickHandlers, failedIcons, 
       map.addLayer({
         id: `${layer.id}-icon`, type: 'circle', source: layer.id,
         layout: { visibility: vis },
-        paint: { 'circle-color': layer.color, 'circle-radius': 6, 'circle-stroke-width': 1.5, 'circle-stroke-color': '#0a0f0c' },
+        paint: { 'circle-color': layer.color, 'circle-radius': 6, 'circle-stroke-width': 1.5, 'circle-stroke-color': C.bg },
       });
     } else {
       map.addLayer({
@@ -211,7 +212,7 @@ function addMapLayer(map, layer, visible, popupRef, clickHandlers, failedIcons, 
             : {}),
         },
         paint: layer.labelField
-          ? { 'text-color': '#f4f1e8', 'text-halo-color': '#0a0f0c', 'text-halo-width': 1.2 }
+          ? { 'text-color': C.text, 'text-halo-color': C.bg, 'text-halo-width': 1.2 }
           : {},
       });
     }
@@ -229,7 +230,7 @@ function addMapLayer(map, layer, visible, popupRef, clickHandlers, failedIcons, 
     map.addLayer({
       id: `${layer.id}-point`, type: 'circle', source: layer.id,
       layout: { visibility: vis },
-      paint: { 'circle-color': layer.color, 'circle-radius': 5, 'circle-stroke-width': 1, 'circle-stroke-color': '#0a0f0c' },
+      paint: { 'circle-color': layer.color, 'circle-radius': 5, 'circle-stroke-width': 1, 'circle-stroke-color': C.bg },
     });
     const handler = (e) => {
       const f = e.features[0];

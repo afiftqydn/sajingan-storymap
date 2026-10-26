@@ -20,6 +20,7 @@
 import { useEffect, useRef } from 'react';
 import { routePoints, routeChains } from '../data/routes.js';
 import { createPathInterpolator } from '../utils/interpolateAlongPath.js';
+import { C } from '../theme.js';
 
 const SOURCE_LINES = 'route-lines';
 const SOURCE_ALERT = 'route-case-alert';
@@ -125,7 +126,7 @@ export default function RouteAnimationLayer({ map, active }) {
         type: 'line',
         source: SOURCE_LINES,
         paint: {
-          'line-color': '#e0c14d',
+          'line-color': C.accentStrong,
           'line-width': 2,
           'line-opacity': 0.85,
           'line-dasharray': DASH_SEQUENCE[0],
@@ -147,8 +148,8 @@ export default function RouteAnimationLayer({ map, active }) {
           'text-size': 11,
         },
         paint: {
-          'text-color': '#f2f0e8',
-          'text-halo-color': '#0a0f0c',
+          'text-color': C.text,
+          'text-halo-color': C.bg,
           'text-halo-width': 1.4,
         },
       });
@@ -161,7 +162,7 @@ export default function RouteAnimationLayer({ map, active }) {
         source: SOURCE_ALERT,
         paint: {
           'circle-radius': 8,
-          'circle-color': '#ff5a3c',
+          'circle-color': C.accent,
           'circle-opacity': 0.35,
           'circle-stroke-width': 0,
         },
@@ -172,9 +173,9 @@ export default function RouteAnimationLayer({ map, active }) {
         source: SOURCE_ALERT,
         paint: {
           'circle-radius': 5,
-          'circle-color': '#ff5a3c',
+          'circle-color': C.accent,
           'circle-stroke-width': 1.5,
-          'circle-stroke-color': '#0a0f0c',
+          'circle-stroke-color': C.bg,
         },
       });
       map.addLayer({
@@ -189,8 +190,8 @@ export default function RouteAnimationLayer({ map, active }) {
           'text-anchor': 'bottom',
         },
         paint: {
-          'text-color': '#ff5a3c',
-          'text-halo-color': '#0a0f0c',
+          'text-color': C.accent,
+          'text-halo-color': C.bg,
           'text-halo-width': 1.2,
         },
       });
@@ -202,9 +203,9 @@ export default function RouteAnimationLayer({ map, active }) {
         source: SOURCE_TRAVELERS,
         paint: {
           'circle-radius': 4,
-          'circle-color': '#f2f0e8',
+          'circle-color': C.text,
           'circle-stroke-width': 1,
-          'circle-stroke-color': '#e0c14d',
+          'circle-stroke-color': C.accentStrong,
         },
       });
 

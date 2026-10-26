@@ -2,8 +2,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, LabelList,
 } from 'recharts';
-import { getChartColors, chartCommonProps } from './chartTheme.js';
-import { useThemeContext } from '../../hooks/ThemeContext.js';
+import { chartColors, chartCommonProps } from './chartTheme.js';
 
 const DATA = [
   { desa: "Sanatab", palmTotal: 1931.78, palmInForest: 1284.79, pct: 66.5 },
@@ -14,12 +13,11 @@ const DATA = [
 ];
 
 export default function VillageComparisonChart() {
-  const theme = useThemeContext();
-  const c = getChartColors(theme);
+  const c = chartColors();
 
   return (
     <div>
-      <p style={{ color: c.text, fontSize: 11, marginBottom: 8, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+      <p style={{ color: c.text, fontSize: 11, marginBottom: 8, fontFamily: 'var(--zl-font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
         Luas kebun kelapa sawit per desa (ha)
       </p>
       <ResponsiveContainer width="100%" height={200}>

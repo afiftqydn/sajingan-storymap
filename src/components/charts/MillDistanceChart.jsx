@@ -1,11 +1,9 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { getChartColors } from './chartTheme.js';
-import { useThemeContext } from '../../hooks/ThemeContext.js';
+import { chartColors } from './chartTheme.js';
 import { potentialMills } from '../../data/reportData.js';
 
 export default function MillDistanceChart() {
-  const theme = useThemeContext();
-  const c = getChartColors(theme);
+  const c = chartColors();
   const data = potentialMills.map((m) => ({ name: m.name, jarak: m.distanceKm ?? 0 }));
 
   if (data.length === 0) {

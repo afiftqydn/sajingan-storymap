@@ -1,11 +1,9 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { getChartColors } from './chartTheme.js';
-import { useThemeContext } from '../../hooks/ThemeContext.js';
+import { chartColors } from './chartTheme.js';
 import { cases } from '../../data/reportData.js';
 
 export default function CaseAreaChart() {
-  const theme = useThemeContext();
-  const c = getChartColors(theme);
+  const c = chartColors();
   const data = cases.map((c2) => ({ name: c2.name, luas: c2.areaHa ?? 0 }));
 
   return (

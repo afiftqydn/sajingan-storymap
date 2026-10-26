@@ -1,6 +1,5 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { getChartColors, chartCommonProps } from './chartTheme.js';
-import { useThemeContext } from '../../hooks/ThemeContext.js';
+import { chartColors, chartCommonProps } from './chartTheme.js';
 
 const DATA = [
   { year: 2015, forestHa: 37691.62 },
@@ -17,12 +16,11 @@ const DATA = [
 ];
 
 export default function ForestTrendChart() {
-  const theme = useThemeContext();
-  const c = getChartColors(theme);
+  const c = chartColors();
 
   return (
     <div>
-      <p style={{ color: c.text, fontSize: 11, marginBottom: 8, fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+      <p style={{ color: c.text, fontSize: 11, marginBottom: 8, fontFamily: 'var(--zl-font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
         Tutupan hutan Sajingan Besar 2015–2025 (ha)
       </p>
       <ResponsiveContainer width="100%" height={180}>
