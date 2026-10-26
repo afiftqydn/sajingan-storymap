@@ -1,5 +1,3 @@
-import BrandMark from './BrandMark.jsx';
-
 const TABS = [
   { id: 'storymap', label: 'Storymap' },
   { id: 'peta', label: 'Peta Interaktif' },
@@ -9,10 +7,6 @@ const TABS = [
 export default function TabSwitcher({ activeTab, onChange }) {
   return (
     <header className="app__topbar">
-      <div className="app__brand">
-        <BrandMark />
-        <span className="app__brand-name">Sajingan Besar</span>
-      </div>
       <nav className="tab-switcher" aria-label="Pilih tab">
         {TABS.map((tab) => (
           <button

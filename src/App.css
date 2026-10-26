@@ -2,15 +2,13 @@
 .app__topbar {
   position: fixed;
   top: 5px;
-  left: 8px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 100;
   display: flex;
-  align-items: stretch;
-  gap: 8px;
   max-width: calc(100vw - 16px);
   font-family: var(--zl-font-chrome);
 }
-.app__brand,
 .tab-switcher {
   display: flex;
   align-items: center;
@@ -20,24 +18,6 @@
   box-shadow: 0 6px 18px rgb(0 0 0 / 0.35);
   animation: zl-card-in 0.45s var(--zl-ease-out) both;
 }
-.app__brand { gap: 12px; padding: 0 18px 0 12px; color: #d4d4d4; }
-.app__brand-name {
-  font: 400 11.5px/1 var(--zl-font-brand);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--zl-accent-strong);
-  white-space: nowrap;
-  animation: zl-brand-in 0.9s var(--zl-ease-out) 0.5s both;
-}
-.zl-mark { display: block; height: 22px; width: auto; aspect-ratio: 660 / 430; }
-.zl-mark-words { opacity: 0; animation: zl-mark-words 0.9s var(--zl-ease-out) 0.9s forwards; }
-.zl-mark-frame { stroke-dasharray: 1; stroke-dashoffset: 1; animation: zl-mark-draw 1.4s var(--zl-ease-out) 0.15s forwards; }
-.zl-mark-zero { color: var(--zl-accent); stroke: var(--zl-accent); transform-box: fill-box; transform-origin: center; animation: zl-mark-breathe 3.2s ease-in-out 1.4s infinite; }
-@keyframes zl-mark-words { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes zl-mark-draw { to { stroke-dashoffset: 0; } }
-@keyframes zl-mark-breathe { 0%, 100% { opacity: 1; transform: scaleY(1); } 50% { opacity: 0.55; transform: scaleY(0.78); } }
-@keyframes zl-brand-in { from { opacity: 0; letter-spacing: 0.26em; transform: translateX(-6px); } to { opacity: 1; letter-spacing: 0.1em; transform: none; } }
-
 .tab-switcher { gap: 2px; padding: 4px; overflow-x: auto; scrollbar-width: none; }
 .tab-switcher button {
   font-family: var(--zl-font-chrome);
@@ -56,12 +36,6 @@
 .tab-switcher button:hover { color: var(--zl-text); background: rgb(var(--zl-surface-2-rgb)); }
 .tab-switcher button.is-active { background: rgb(var(--zl-accent-rgb) / 0.16); color: var(--zl-accent); }
 .tab-switcher button:focus-visible { outline: 2px solid var(--zl-accent); outline-offset: 1px; }
-
-@media (prefers-reduced-motion: reduce) {
-  .zl-mark-frame { animation: none; stroke-dashoffset: 0; }
-  .zl-mark-zero { animation: none; }
-  .zl-mark-words { animation: none; opacity: 1; }
-}
 
 /* ---------- Story (tab Storymap) ----------
    Layout: rail ikon tipis (kiri, lihat bagian nav di bawah, SELALU ada
@@ -1318,10 +1292,6 @@
    ══════════════════════════════════════════════════════ */
 
 /* ── Header ── */
-@media (max-width: 900px) {
-  .app__brand-name { display: none; }
-  .app__brand { padding: 0 8px; }
-}
 @media (max-width: 640px) {
   .tab-switcher button { font-size: 11px; padding: 6px 10px; }
 }

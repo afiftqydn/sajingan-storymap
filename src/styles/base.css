@@ -42,5 +42,5 @@ body { overscroll-behavior: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html, body, #root { scroll-behavior: auto; }
-  .zl-loading-bar::after, .app__brand, .app__topbar { animation: none; }
+  .zl-loading-bar::after, .tab-switcher { animation: none; }
 }
